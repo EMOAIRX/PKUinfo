@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pku.pkuinfo.mapper.FeedbackMapper">
+    <insert id="insertActivityFeedback" parameterType="pku.pkuinfo.pojo.ActivityFeedbackInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO activity_feedback (target_activity_id, description, type)
+        VALUES (#{targetActivityId}, #{description}, #{type})
+    </insert>
+
+    <select id="selectActivityFeedback">
+        SELECT * FROM activity_feedback
+    </select>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pku.pkuinfo.mapper.ActivityMapper">
+    <insert id="insertActivity" parameterType="pku.pkuinfo.pojo.ActivityInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO activity (id, title, address, start_date, end_date,start_time, end_time, description, college, account_link, extra_info)
+        VALUES (#{id}, #{title}, #{address}, #{startDate}, #{endDate},#{startTime}, #{endTime}, #{description}, #{college}, #{accountLink}, #{extraInfo})
+    </insert>
+
+    <select id="selectActivity" parameterType="java.sql.Date" resultType="pku.pkuinfo.pojo.ActivityInfo">
+        SELECT * FROM activity WHERE start_date BETWEEN #{startDate} AND #{endDate}
+    </select>
+</mapper>
