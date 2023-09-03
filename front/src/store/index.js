@@ -73,7 +73,7 @@ export default new Vuex.Store({
 					// 日期格式化
 					// convert 8-30-2023 to 2023/08/30
 					let targetStartDateStrArr = targetStartDate.split('/');
-					let targetStartDateStr = targetStartDateStrArr[2] + '-' + targetStartDateStrArr[0] + '-' + targetStartDateStrArr[1];
+					let targetStartDateStr = targetStartDateStrArr[0] + '-' + targetStartDateStrArr[1] + '-' + targetStartDateStrArr[2];
 					if (targetStartDateStrArr[1].length < 2) {
 						targetStartDateStrArr[1] = '0' + targetStartDateStrArr[1];
 					}

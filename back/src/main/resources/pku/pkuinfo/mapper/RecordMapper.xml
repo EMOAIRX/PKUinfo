@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pku.pkuinfo.mapper.RecordMapper">
+    <insert id="insertRecord" parameterType="pku.pkuinfo.pojo.RecordInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO record (id, title, author, publish_time)
+        VALUES (#{id}, #{title}, #{author}, #{publish_time})
+    </insert>
+
+    <select id="checkActivity" parameterType="pku.pkuinfo.pojo.RecordInfo" resultType="pku.pkuinfo.pojo.RecordInfo">
+        SELECT * FROM record
+        <where>
+            title = #{title} AND author = #{author} AND publish_time = #{publish_time}
+        </where>
+    </select>
+</mapper>
