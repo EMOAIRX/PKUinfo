@@ -20,18 +20,46 @@ class GPTProcessor:
         result = self.ask_chatgpt(text)
         return result
 
-    def Text_to_JSON(self, text):
+    def first_guess(self,title,text):
         my_messages = [
-            {"role": "system", "content": "Now that you are engaged in professional text processing, please let me know if the push below is a preview of an event (such as a lecture or ticket collection) (而不是活动总结或者其它内容). If so, please use JSON format to tell me the 'event_name', 'event_time', 'location', 'organizational_unit', and 'event_summary'. 时间尽可能规范到特定的时刻，如果有多个时间请一并输出，如没有则以None存在，推送发布时间为2023年，如果有多个活动，请返回list，如果没有则返回空list。Otherwise, tell me the activity category it belongs to."},
-            {"role": "user", "content": text},
+            {"role": "system", "content": "根据下面这个标题和部分文字，你觉得是否可能是某种活动 的 预告 售票 报名，请直接告诉我答案为'是'或'否'。请不要回复任何其它内容。请回复一个字，不要回复多个字。如果你觉得不确定，也请回复'是'。"},
+            {"role": "user", "content": title + '\n' + text[:20]},
         ]
-        infolist = self.ask_chatgpt(my_messages)
-        infolist = infolist.replace('\n', ' ')
+        ans = self.ask_chatgpt(my_messages)
+        print(ans)
+        if ans == '否':
+            return False
+        return True
+
+
+    def Text_to_JSON(self, text):
         try:
+            my_messages = [
+                {"role": "system", "content": "Now that you are engaged in professional text processing, please let me know if the push below is a preview of an event (such as a lecture or ticket collection) (而不是活动总结或者其它内容). If so, please use JSON format to tell me the 'event_name', 'event_time', 'location', 'organizational_unit', and 'event_summary'. 时间尽可能规范到特定的时刻，如果有多个时间请一并输出，如没有则以None存在，推送发布时间为2023年，如果有多个活动，请返回list，如果没有则返回空list。Otherwise, tell me the activity category it belongs to."},
+                {"role": "user", "content": text},
+            ]
+            infolist = self.ask_chatgpt(my_messages)
+            infolist = infolist.replace('\n', ' ') 
+        except:
+            my_messages = [
+                {"role": "system", "content": "请获取下文（这是一篇推送的前半部分）的摘要，不要忽略所有的时间，地点，主办方，主题，摘要"},
+                {"role": "user", "content": text[:1700]},
+            ]
+            summary = self.ask_chatgpt(my_messages)
+            my_messages = [
+                {"role": "system", "content": "Now that you are engaged in professional text processing, please let me know if the push below is a preview of an event (such as a lecture or ticket collection) (而不是活动总结或者其它内容). If so, please use JSON format to tell me the 'event_name', 'event_time', 'location', 'organizational_unit', and 'event_summary'. 时间尽可能规范到特定的时刻，如果有多个时间请一并输出，如没有则以None存在，推送发布时间为2023年，如果有多个活动，请返回list，如果没有则返回空list。Otherwise, tell me the activity category it belongs to."},
+                {"role": "user", "content": summary + '\n' + text[:1300]},
+            ]
+            infolist = self.ask_chatgpt(my_messages)
+            infolist = infolist.replace('\n', ' ') 
+
+        try:
+            print(infolist)
             json_list = json.loads(infolist)
         except:
             print('Error: json.loads error')
             return []
+
         if type(json_list) != list: 
             json_list = [json_list]
         should_exist = ['event_name', 'event_time', 'location', 'organizational_unit', 'event_summary']
@@ -85,78 +113,6 @@ class GPTProcessor:
 
 if __name__ == '__main__':
     test_text = '''
- 微信号 beidatuanwei 
- 功能介绍 共青团北京大学委员会官方公众号
-
-文化中国
-
-
-水立方杯
-
-
-
-嘹亮歌声传四海，文化激荡遍九州。
-同心共圆中国梦，交流互鉴谱新篇。
-在这个盛夏七月，2023年“文化中国·水立方杯”中文歌曲大赛（北京赛区）决赛将于7月9日晚在北京大学百周年纪念讲堂李莹厅举办。
-
-左滑查看往届大赛活动图片
-
-
-
-壹
-大赛简介
-
-
-
-以歌传情，以赛为媒，以侨为桥，2023年“文化中国·水立方杯”中文歌曲大赛（北京赛区）在这个夏天如约而至。自本届大赛正式启动以来，各参赛高校留学 
-生热情响应、积极参与。经过选拔赛和晋级赛的激烈角逐，共有10名选手赢得了北京赛区决赛的入场券，用最美歌声彰显时代强音！
-
-歌声连接各国青年，音乐搭建友谊桥梁。“文化中国·水立方杯”中文歌曲大赛（北京赛区）致力于展现世界青年积极、乐观、自信的精神风貌，致力于推动文 
-明交流互鉴。
-
-2023年“文化中国·水立方杯”中文歌曲大赛宣传片
-
-
-
-贰
-决赛场次信息
-
-
-
-决赛时间：2023年7月9日（星期日）晚19:00—21:30
-决赛地点：北京大学百周年纪念讲堂李莹厅
-
-叁
-领票时间及地点
-
-
-
-领票时间：2023年7月8日（星期六）15：00（数量有限，先到先得）
-领票地点：北京大学学生会办公室（新太阳学生中心北侧）
-
-领票要求
-
-
-
-各位同学领票时，需本人在场出示校园卡或学生证以便核验身份，每名同学限领一张门票，感谢配合。
-
-
-
-
-万里山河，长风浩荡。
-交流互鉴，共创未来。
-让我们相聚在燕园，
-唱响“再欢聚，更美好”的真诚祝愿，
-7月9日晚19:00，我们不见不散！
-
-
-编辑 | 宋海博
-新媒体编辑 | 张祺祺
-责任编辑 | 张祺祺
-审核 | 连烨 芮泽华
-图片来源 | “文化中国·水立方杯”公众号
-
-微信扫一扫关注该公众号
 '''
     processor = GPTProcessor()
     print ( processor.Text_to_JSON(test_text) )

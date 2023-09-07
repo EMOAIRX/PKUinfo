@@ -7,29 +7,9 @@ import csv
 import easyocr
 import time
 class ContentGetter:
-    def __init__(self):        
-        # self.reader = easyocr.Reader(
-        #     ['ch_sim','en'],
-        #     gpu = False,
-            # detect_network= 'craft',
-            # download_enabled= False,
-            # model_storage_directory= '/mnt/d/projectB/py/add/model/'
-        # )
-        # print('OCR loaded')
+    def __init__(self): 
         pass
-
-    def ocr(self, img_dir) -> str:
-        try:
-            ocrinfo = self.reader.readtext(img_dir)
-        except:
-            return ''
-
-        result = ''
-        for item in ocrinfo:
-            result += item[1]
-        # print('result = ', result)
-        return result
-
+        
     def get_title(self, soup : BeautifulSoup) -> str:
         title = soup.find(id = "activity-name").text
         title = title.replace('\n', '').strip()
@@ -80,8 +60,13 @@ class ContentGetter:
 
     def get_fullcontent(self, url) -> WebContent:
         result = WebContent()
-        response = requests.get(url) #requests.models.Response
+        try:
+            response = requests.get(url) #requests.models.Response
+        except:
+            raise Exception("invalid URL")
         response.encoding = 'utf-8' 
+        if response.status_code != 200:
+            raise Exception("Connection Error")
         html_doc = response.text #str
         soup = BeautifulSoup(html_doc,features='lxml') #bs4.BeautifulSoup
         result.title = self.get_title(soup)
@@ -94,6 +79,6 @@ class ContentGetter:
 
 if __name__ == "__main__":
     content_getter = ContentGetter()
-    url = 'https://mp.weixin.qq.com/s/CLxcCN0FhcuswCKYR-ITpA'
+    url = 'https://mp.weixin.qq.com/s?__biz=MzAwNTEzNzcwNg==&mid=2651115501&idx=1&sn=a794b0c8e02f759f73ebebe60f1b65b5&chksm=80d15ba8b7a6d2befd0312a2e6c6a7becf684e2421e0b48b4baf0ed1b5a4249b9fad5474222b#rd'
     result = content_getter.get_fullcontent(url)
     print(result)

@@ -1,47 +1,55 @@
 package pku.pkuinfo.service;
 
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import pku.pkuinfo.pojo.Link;
 
 import java.io.*;
-import java.net.Socket;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Objects;
 
 @Service
 public class ActivityProcessService {
 
     // 后期要做其他优化
-    private String transmitMessage(Link url){
+    private String transmitMessage(Link url) {
         String res = null;
 
-        String message = url.getLink();
         try {
-            //创建一个Socket，跟python的8080端口链接
-            Socket socket = new Socket("localhost",9001);
-            // 建立IO流
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            // Create a JSON object with the URL
+            JSONObject json = new JSONObject();
+            json.put("URL", url.getLink());
 
-            //发送数据
-            bw.write(message);
-            bw.flush();
+            // Create a URL object for the server
+            URL serverUrl = new URL("http://localhost:9001");
 
-            //接收数据 IO阻塞
-            System.out.println("发送完毕，准备接受");
+            // Open a connection to the server
+            HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
 
-            res = br.readLine();
+            // Write the JSON object to the connection's output stream
+            OutputStream outputStream = connection.getOutputStream();
+            outputStream.write(json.toString().getBytes());
+            outputStream.flush();
+            outputStream.close();
 
-            System.out.println("接收完毕");
+            // Read the response from the server
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder responseBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                responseBuilder.append(line);
+            }
+            reader.close();
 
-            //关闭资源
-            bw.close();
-            br.close();
-            socket.close();
+            // Set the response string
+            res = responseBuilder.toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("接收信息： "+res);
 
         return res;
     }

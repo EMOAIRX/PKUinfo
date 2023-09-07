@@ -107,7 +107,8 @@ export default {
                 // 控制可选范围
                 disabledDate(time) {
                     // 暂定截止时间最大为三个月
-                    return (time.getTime() < new Date(new Date().toLocaleDateString()) || time.getTime() > new Date(Date.parse(new Date().toLocaleDateString()) + 1000*60*60*24*90 ));
+                    return (time.getTime() < new Date(Date.parse(new Date().toLocaleDateString()) - 1000*60*60*24*30) 
+                        || time.getTime() > new Date(Date.parse(new Date().toLocaleDateString()) + 1000*60*60*24*90 ));
                 },
                 // 快捷导航部分
                 shortcuts: [{

@@ -18,3 +18,9 @@ openai
 lxml
 
 ```
+
+
+keys.py be like
+
+openai_APIKEY = "..."
+openai_BASE = "..."
