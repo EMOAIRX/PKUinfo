@@ -67,11 +67,11 @@ export default new Vuex.Store({
 						continue;
 					}
 					// 日期格式YYYY/M/D
-					let targetStartDate = (new Date(store.state.standardLocalDate + index * 30 * ONEDAY)).toLocaleDateString();
+					let targetStartDate = (new Date(store.state.standardLocalDate + index * 31 * ONEDAY)).toLocaleDateString();
 					console.log(index, targetStartDate);
 
 					// 日期格式化
-					
+
 					let targetStartDateStrArr = targetStartDate.split('/');
 					let targetStartDateStr = targetStartDateStrArr[0] + '-' + targetStartDateStrArr[1] + '-' + targetStartDateStrArr[2];
 					if (targetStartDateStrArr.length === 3 && targetStartDateStrArr[0].length < 3 && targetStartDateStrArr[1].length < 3 && targetStartDateStrArr[2].length === 4) {
@@ -87,10 +87,22 @@ export default new Vuex.Store({
 
 					let res = await request.get('/user/activity/' + targetStartDateStr);
 					console.log(res);
+
+					let uniqueRes = Array.from(new Set(res.data.data.map(item => item.id))).map(id => {
+						return res.data.data.find(item => item.id === id);
+					});
+
+					uniqueRes.sort((a, b) => {
+						return new Date(a.start_time) - new Date(b.start_time);
+					});
+
 					let ins = {
-						res: res.data.data,
+						res: uniqueRes,
 						index: index
 					}
+
+					
+
 					store.commit("updateActivityArray", ins);
 				}
 				store.commit('setActivityLoadingMark', false);

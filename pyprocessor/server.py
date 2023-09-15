@@ -11,7 +11,7 @@ def handle_request():
         data = request.data.decode('utf-8')
         URL = json.loads(data)['URL']
         url2json = URL2JSON()
-        result_jsonlist = url2json.get_jsonlist(URL , check_repeated = False)
+        result_jsonlist = url2json.get_jsonlist(URL)
 
         for result in result_jsonlist:
             data = url2json.convert_to_ActivityInfo(str(result))

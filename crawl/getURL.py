@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import time
-
+from TOKENS import NOWTOKEN,headers
 def page(name,fad,num=1):                             #要请求的文章页数
     url = 'https://mp.weixin.qq.com/cgi-bin/appmsg'
     title = []
@@ -23,13 +23,27 @@ def page(name,fad,num=1):                             #要请求的文章页数
         r = requests.get(url,headers = headers,params=data)
         print(r)
         # get json
-        dic = r.json()            
-        for i in dic['app_msg_list']:     #遍历dic['app_msg_list']中所有内容
-            res. append((i['title'],i['link']))
+        dic = r.json() 
+        print('dic:',dic)
+        try:
+            for i in dic['app_msg_list']:     #遍历dic['app_msg_list']中所有内容
+                res. append((i['title'],i['link']))
+        except:
+            print('error')
     return (name,res)
 
 if __name__ == '__main__':
     str = '''
+北京大学学生服务总队 MzU5NjYzNjg0Mw==
+北京大学社会学系 MzU5MjczNjU0NQ==
+北京大学计算机学院 MzU2MTEwNjk4Mg==
+北京大学历史学系 MzI0ODE4MjM5Mw==
+北京大学经济学院 MzIzMzM2NDA5Nw==
+北京大学数学科学学院 MzUzMzg4MzgxMQ==
+pku数学系 MzkxNTM1MjU5Mw==
+P大CoE教务 MzI4OTYxMzkyOA==
+北京大学中文系 MzI0ODcwNjkwNw==
+北大社会学 MzkxMzMxMzQ2NQ==
 北京大学智能学院 Mzk0NDE3ODg5Nw==
 北大国发院 MjM5MDIwNDg0MA==
 北京大学公共卫生学院生物统计系 MzU5MDg1ODYyMA==
@@ -103,16 +117,6 @@ PKU烹协 MzI4MjU0Njc1Ng==
 PKU创新学社 MzA3MjMzNTQ1OQ==
 北大汉推办 MzI2ODA5NTg4Nw==
 北京通用人工智能研究院 Mzg2Njc1NjM2OA==
-北京大学学生服务总队 MzU5NjYzNjg0Mw==
-北京大学社会学系 MzU5MjczNjU0NQ==
-北京大学计算机学院 MzU2MTEwNjk4Mg==
-北京大学历史学系 MzI0ODE4MjM5Mw==
-北京大学经济学院 MzIzMzM2NDA5Nw==
-北京大学数学科学学院 MzUzMzg4MzgxMQ==
-pku数学系 MzkxNTM1MjU5Mw==
-P大CoE教务 MzI4OTYxMzkyOA==
-北京大学中文系 MzI0ODcwNjkwNw==
-北大社会学 MzkxMzMxMzQ2NQ==
 
 '''
     import random
@@ -150,6 +154,6 @@ P大CoE教务 MzI4OTYxMzkyOA==
                 print(i[0],i[1])
                 link = i[1]
                 POSTER(link)
-                SLEEPTIME = 15
+                SLEEPTIME = 60
                 print('sleep',SLEEPTIME)
             time.sleep(SLEEPTIME)

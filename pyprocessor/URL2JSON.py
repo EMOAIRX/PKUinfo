@@ -57,9 +57,9 @@ class URL2JSON:
             raise Exception("Not an Activity")
 
         processed_text = content.title + '\n 文章发布发布时间(并非活动时间):' + content.publish_time + '\n' + content.author + '\n' + content.text
-        for img_link in content.img_url:
-            txt_tmp = self.ocr_reader.ocr(img_link)
-            processed_text += '\n' + txt_tmp 
+        # for img_link in content.img_url:
+        #     txt_tmp = self.ocr_reader.ocr(img_link)
+        #     processed_text += '\n' + txt_tmp 
         
         jsondata_list = None
         for i in range(1):
@@ -117,6 +117,8 @@ if __name__ == '__main__':
     # url = 'https://mp.weixin.qq.com/s/z1i77-JDpPG3Dbvh8LLRmQ'
     # url = 'http://mp.weixin.qq.com/s?__biz=Mzg2Njc1NjM2OA==&mid=2247494924&idx=1&sn=5c4b1fcf65fab88214c5cabe64e6fbfd&chksm=ce475f73f930d665e8052799120ae478b33d802fede90016c929f89231b3abdd29fb786cad3d#rd'
     # url = 'https://mp.weixin.qq.com/s?__biz=MzI0ODcwNjkwNw==&mid=2247495765&idx=1&sn=51d1353d9d34d2c12c39c45559aca05c&chksm=e99e1261dee99b77e3433683ea5a0dc65db8feede318b3b556adcce9873a5d70edafdaa65272#rd'
-    url = 'https://mp.weixin.qq.com/s/S2NPWmWLY0mSjzWKaoyElA'
+    url = 'https://mp.weixin.qq.com/s?__biz=MjM5MTg0MDE4NQ==&mid=2651231260&idx=2&sn=b1e88e137d12b17bf654b9bb307d7a83&chksm=bd5d56ca8a2adfdc9f6e3fbbf7c12009a2e1700b0e99c863bea737f503bed3606955db0298cd#rd'
     url2json = URL2JSON()
     print(url2json.get_jsonlist(url,check_repeated=False))
+    # strr = '{   "event_name": "2023 国际华语控烟辩论赛邀请赛半决赛",   "event_time": [     "2023-08-11 23:59"   ],   "location": null,   "organizational_unit": "北大辩协",   "event_summary": "健言青春·2023 国际华语控烟辩论赛邀请赛半决赛邀您共同参与！"   }'
+    # print(json.loads(strr))

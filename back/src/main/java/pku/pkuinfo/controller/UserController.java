@@ -9,6 +9,7 @@ import pku.pkuinfo.service.ActivityOperationService;
 import pku.pkuinfo.service.ActivityProcessService;
 import pku.pkuinfo.service.FeedbackOperationService;
 import pku.pkuinfo.utils.Result;
+import java.util.Calendar;
 
 import java.sql.Date;
 import java.util.List;
@@ -37,8 +38,16 @@ public class UserController {
     // 时间片大小为30天 起始日期为请求日期
     @GetMapping("/api/user/activity/{startDate}")
     public Result selectActivity(@PathVariable Date startDate){
-        // System.out.println(startDate);
         List<ActivityInfo> activityList = activityService.select(startDate);
+        for (ActivityInfo activity : activityList) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(activity.getStartDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setStartDate(new Date(cal.getTimeInMillis()));
+            cal.setTime(activity.getEndDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setEndDate(new Date(cal.getTimeInMillis()));
+        }
         return Result.success(activityList);
     }
 
