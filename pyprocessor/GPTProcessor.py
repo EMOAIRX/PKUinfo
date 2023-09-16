@@ -1,17 +1,16 @@
 import os
 import openai
 import json
-from keys import openai_APIKEY, openai_BASE
+from keys import openai_APIKEY, openai_BASE, zhipuai_APIKEY
 
 class GPTProcessor:
     def __init__(self):
         openai.api_key = openai_APIKEY
         openai.api_base = openai_BASE
+        zhipuai.api_key = zhipuai_APIKEY
         self.id = 0
 
     def ask_chatgpt(self, my_messages): #可以做异步，和GPT连接请求发出后，在全部完成前可以切换到其它线程
-        import zhipuai
-        zhipuai.api_key = "578b7a96a78e6cb751ee12afaa24d416.2O6f4vV4ENy74MCk"
         print({"role": "user", "content": my_messages[0]['content'] + '\n' + my_messages[1]['content']})
         response = zhipuai.model_api.sse_invoke(
             model="chatglm_pro",
