@@ -4,9 +4,12 @@
             placeholder="请输入文章链接"
             prefix-icon="el-icon-upload"
             v-model="link"
-            class="inputArea">
+            class="inputArea"
+            size="small">
         </el-input>
-        <el-button type="primary" class="submitButton" @click="submitHandler">提交</el-button>
+        <div style="display: block; margin-top: 10px;">
+            <el-button type="primary" class="submitButton" @click="submitHandler">提交</el-button>
+        </div>
     </div>
 </template>
 

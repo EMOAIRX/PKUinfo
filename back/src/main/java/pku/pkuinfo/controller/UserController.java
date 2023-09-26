@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pku.pkuinfo.pojo.ActivityFeedbackInfo;
 import pku.pkuinfo.pojo.ActivityInfo;
+import pku.pkuinfo.pojo.WeekActivityInfo;
 import pku.pkuinfo.pojo.Link;
 import pku.pkuinfo.service.ActivityOperationService;
 import pku.pkuinfo.service.ActivityProcessService;
@@ -48,6 +49,15 @@ public class UserController {
             cal.add(Calendar.DATE, 1);
             activity.setEndDate(new Date(cal.getTimeInMillis()));
         }
+        return Result.success(activityList);
+    }
+
+    // 请求路径示例：localhost:8080/api/user/activity/week
+    @GetMapping("/api/user/activity/week")
+    public Result selectWeekActivity(){
+        Calendar calendar = Calendar.getInstance();
+        Date startDate = new Date(calendar.getTimeInMillis());
+        List<WeekActivityInfo> activityList = activityService.weekselect(startDate);
         return Result.success(activityList);
     }
 

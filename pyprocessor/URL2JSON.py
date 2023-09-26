@@ -18,11 +18,7 @@ def check_is_repeated(content : WebContent) -> bool:
     print("查重请求发送")
     response_data = json.loads(r.text) #code来存这个东西真的好吗，code最好是200OK,
     if response_data['code'] == 1: return True
-    else: 
-        url = 'http://localhost:8080/api/admin/record'
-        r = requests.post(url, json.dumps(data), headers=headers) #啊啊
-        print("记录请求发送")
-        return False
+    return False 
     # 好浪费啊，通过网络来回传递很慢的，这个最好还是在java端解决吧
     # 交互传输的代价就很大啊。。。
 
@@ -57,9 +53,9 @@ class URL2JSON:
             raise Exception("Not an Activity")
 
         processed_text = content.title + '\n 文章发布发布时间(并非活动时间):' + content.publish_time + '\n' + content.author + '\n' + content.text
-        # for img_link in content.img_url:
-        #     txt_tmp = self.ocr_reader.ocr(img_link)
-        #     processed_text += '\n' + txt_tmp 
+        for img_link in content.img_url:
+            txt_tmp = self.ocr_reader.ocr(img_link)
+            processed_text += '\n' + txt_tmp 
         
         jsondata_list = None
         for i in range(1):
@@ -88,6 +84,15 @@ class URL2JSON:
             result_list.append(jsondata)
         print("JSON数据:")
         print(result_list)
+        if check_repeated:
+            url = 'http://localhost:8080/api/admin/record'
+            headers = {'Content-Type': 'application/json'}
+            data = {}
+            data["title"] = content.title
+            data["author"] = content.author
+            data["publish_time"] = content.publish_time #到底是publish_time还是update_time，好像一开始改的就是错的？这个是create_time
+            r = requests.post(url, json.dumps(data), headers=headers) #啊啊
+            print("记录请求发送")
         return result_list
 
     def convert_to_ActivityInfo(self, json_data):
@@ -99,10 +104,10 @@ class URL2JSON:
         activityInfo = {}
         activityInfo["title"] = json_data["event_name"][:60] if json_data["event_name"] is not None else None
         activityInfo["address"] = json_data["location"][:100] if json_data["location"] is not None else None
-        activityInfo["startDate"] = json_data["data"] if json_data["data"] is not None else None
-        activityInfo["endDate"] = json_data["data"] if json_data["data"] is not None else None
-        activityInfo["startTime"] = json_data["time"] if json_data["time"] is not None else None
-        activityInfo["endTime"] =  json_data["time"] if json_data["time"] is not None else None
+        activityInfo["startDate"] = json_data["date1"] if json_data["date1"] is not None else None
+        activityInfo["endDate"] = json_data["date2"] if json_data["date2"] is not None else None
+        activityInfo["startTime"] = json_data["time1"] if json_data["time1"] is not None else None
+        activityInfo["endTime"] =  json_data["time2"] if json_data["time2"] is not None else None
         activityInfo["description"] = json_data["event_summary"]
         activityInfo["college"] = json_data["organizational_unit"][:40] if json_data["organizational_unit"] is not None else None
         activityInfo["accountLink"] = json_data["url"][:255] if json_data["url"] is not None else None
@@ -117,8 +122,9 @@ if __name__ == '__main__':
     # url = 'https://mp.weixin.qq.com/s/z1i77-JDpPG3Dbvh8LLRmQ'
     # url = 'http://mp.weixin.qq.com/s?__biz=Mzg2Njc1NjM2OA==&mid=2247494924&idx=1&sn=5c4b1fcf65fab88214c5cabe64e6fbfd&chksm=ce475f73f930d665e8052799120ae478b33d802fede90016c929f89231b3abdd29fb786cad3d#rd'
     # url = 'https://mp.weixin.qq.com/s?__biz=MzI0ODcwNjkwNw==&mid=2247495765&idx=1&sn=51d1353d9d34d2c12c39c45559aca05c&chksm=e99e1261dee99b77e3433683ea5a0dc65db8feede318b3b556adcce9873a5d70edafdaa65272#rd'
-    url = 'https://mp.weixin.qq.com/s?__biz=MjM5MTg0MDE4NQ==&mid=2651231260&idx=2&sn=b1e88e137d12b17bf654b9bb307d7a83&chksm=bd5d56ca8a2adfdc9f6e3fbbf7c12009a2e1700b0e99c863bea737f503bed3606955db0298cd#rd'
+    # url = 'https://mp.weixin.qq.com/s?__biz=MjM5MTg0MDE4NQ==&mid=2651231260&idx=2&sn=b1e88e137d12b17bf654b9bb307d7a83&chksm=bd5d56ca8a2adfdc9f6e3fbbf7c12009a2e1700b0e99c863bea737f503bed3606955db0298cd#rd'
+    url = 'http://mp.weixin.qq.com/s?__biz=MzI0ODcwNjkwNw==&mid=2247495962&idx=1&sn=7c1337fff4e71bca56bc58e1f648c129&chksm=e99e132edee99a389cd790d87cea38e88b72ed4e87456ab43ca021e67a1da18d0e389614c78c#rd'
     url2json = URL2JSON()
-    print(url2json.get_jsonlist(url,check_repeated=False))
+    print(url2json.get_jsonlist(url))
     # strr = '{   "event_name": "2023 国际华语控烟辩论赛邀请赛半决赛",   "event_time": [     "2023-08-11 23:59"   ],   "location": null,   "organizational_unit": "北大辩协",   "event_summary": "健言青春·2023 国际华语控烟辩论赛邀请赛半决赛邀您共同参与！"   }'
     # print(json.loads(strr))

@@ -12,4 +12,4 @@ while True:
     #     break
     # else:
     #     print("Port 9001 is not open, waiting...")
-    time.sleep(300)
+    time.sleep(60)

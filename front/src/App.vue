@@ -2,7 +2,7 @@
 	<div>
 		<el-container>
 			<!-- Header部分 可以考虑整点图片什么的？ -->
-			<el-header>Header</el-header>
+			<el-header> contribute: https://github.com/EMOAIRX/PKUinfo                                  	 https://docs.qq.com/sheet/DTkFPbXlLeHdCblBW </el-header>
 			<el-main>
 				<MainMenu></MainMenu>
 			</el-main>
