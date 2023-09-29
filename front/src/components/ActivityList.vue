@@ -13,9 +13,10 @@
                     end-placeholder="结束日期"
                     :picker-options="pickerOptions"
                     :default-time="['00:00:00', '00:00:00']"
-                    @change="selectDateRange">
+                    @change="selectDateRange"
+                    :disabled-date="disabledDate"
+                    readonly>
                 </el-date-picker>
-            </el-col>
             
             <!-- 2. 条件选择器 -->
             <el-col :span="4" :offset="16">
@@ -43,7 +44,7 @@
                 <template slot-scope="props">
                     <el-descriptions title="活动信息" :column="2" :colon="false">
                         <template slot="extra">
-                            <el-button type="primary" icon="el-icon-edit" size="mini" @click="feedbackHandler(props.row)">反馈</el-button>
+                            <!-- <el-button type="primary" icon="el-icon-edit" size="mini" @click="feedbackHandler(props.row)"></el-button> -->
                         </template>
                         <el-descriptions-item label="活动名称">{{ props.row.title }}</el-descriptions-item>
                         <!-- 占位？ -->
@@ -75,7 +76,7 @@
         </el-table>
         <!-- 分页部分 -->
         <el-row :gutter="20">
-            <el-col :offset="16" :span="8">
+            <el-col :offset="0" :span="20">
                 <!-- @current-change="handleCurrentChange"未用上-->
                 <el-pagination
                     :current-page.sync="currentPage"
@@ -244,6 +245,13 @@ export default {
                 return Date.parse(currentValue.startDate) >= begin && Date.parse(currentValue.startDate)<= end;
             });
 
+            if(result.length > 0) {
+                result.sort((a, b) => {
+                    const aDateTime = new Date(`${a.startDate} ${a.startTime}`);
+                    const bDateTime = new Date(`${b.startDate} ${b.startTime}`);
+                    return aDateTime - bDateTime;
+                });
+            }
             // 复选框选择
             // demo版本 暂未插入选择字段
             if(this.selectedValues.length===0){
@@ -276,11 +284,23 @@ export default {
 .demo-table-expand .el-form-item {
     margin-right: 0;
     margin-bottom: 0;
-    width: 50%;
+    width: 100%;
 }
 
 /deep/ .el-descriptions{
-    padding-left:25px;
-    padding-right:25px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+@media screen and (max-width: 768px) {
+    .demo-table-expand label {
+        width: 50%;
+    }
+    /deep/ .el-descriptions{
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    .el-date-range-picker__content {
+        max-width: 100%;
+    }
 }
 </style>

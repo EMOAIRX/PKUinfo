@@ -65,7 +65,7 @@ if __name__ == '__main__':
         for name,fad in zip(name_list,fakeid_list):
             print(name,fad)
 
-            SLEEPTIME = random.randint(200,400)
+            SLEEPTIME = random.randint(600,1000)
             print('sleep',SLEEPTIME)
             outdata = page(name,fad,1)
             #output all the urls
@@ -74,7 +74,7 @@ if __name__ == '__main__':
                 link = i[1]
                 try:
                     POSTER(link)
-                    SLEEPTIME = random.randint(30,60)
+                    SLEEPTIME = random.randint(50,80)
                 except:
                     print('error POST link = ',link)
                 

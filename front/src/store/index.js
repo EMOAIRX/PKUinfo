@@ -93,14 +93,16 @@ export default new Vuex.Store({
 					});
 
 					uniqueRes.sort((a, b) => {
-						return new Date(a.start_time) - new Date(b.start_time);
+						const dateA = new Date(a.start_date + ' ' + a.start_time); 
+						const dateB = new Date(b.start_date + ' ' + b.start_time);
+						return dateA - dateB;
 					});
+
 
 					let ins = {
 						res: uniqueRes,
 						index: index
-					}
-
+					};
 					
 
 					store.commit("updateActivityArray", ins);

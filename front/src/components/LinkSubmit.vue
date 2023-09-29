@@ -49,19 +49,23 @@ export default {
 <style lang="less" scoped>
 /deep/ .inputArea {
     display: inline-block;
-    width: 600px;
+    width: 100%;
 }
 
 .submitButton {
-    margin-left: 20px;
-    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 90%;
+    margin-top: 10px;
 }
 
 .inputBar {
     width: 100%;
     margin-top:120px;
     margin-bottom:120px;
-    margin-left:calc(50% - 345px);
+    margin-left:auto;
+    margin-right:auto;
 }
 
 </style>

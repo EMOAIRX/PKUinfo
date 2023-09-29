@@ -36,7 +36,7 @@
             :title="drawerDateTitle"
             :visible.sync="drawer"
             :with-header="false"
-            size="45%">
+            size="90%">
             <span class="drawer-header">
                 <!-- {{ drawerDate.split('-').slice(1).join('-') }} -->
                 {{ drawerDateTitle }}
@@ -50,13 +50,13 @@
                     placement="top">
                     <!-- 活动内容组件 -->
                     <el-collapse>
-                        <el-collapse-item :title="activity.title">
+                        <el-collapse-item :title="activity.title" :popper-class="'multi-line'">
                             <el-row :gutter="20" v-for="(value,key,innerIndex) in activity"
                             :key="innerIndex">
                                 <el-col :span="8">
                                     <p>{{ key }}</p>
                                 </el-col>
-                                <el-col :span="16">
+                                <el-col :span="12">
                                     <p>{{ value }}</p>
                                 </el-col>
                             </el-row>
@@ -65,6 +65,16 @@
                 </el-timeline-item>
             </el-timeline>
             <div v-else class="drawer-content">
+            .cell-title {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .cell-content {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
                 <div v-if="isInRange(drawerDate)">
                     今日暂无活动
                 </div>
@@ -94,185 +104,217 @@ export default {
     mounted() {
         // 更新后台数据
         // 监听当前页面最大选择日期是否已经加载，未加载的情况进行加载
-        this.$watch(
-            ()=>{
-                return this.$refs.calendar.$children[1].rows[5][6];
+                this.$watch(
+                    ()=>{
+                        return this.$refs.calendar.$children[1].rows[5][6];
+                    },
+                    (newVal)=>{
+                        if(newVal.type=='next'){
+                            let nextMonth = this.$refs.calendar.$children[1].nextMonthDatePrefix;
+                            let day = newVal.text.toString().length<2?'0'+newVal.text:newVal.text;
+                            // console.log(nextMonth+'-'+day);
+
+                            let targetTimeRange = Date.parse(nextMonth+'-'+day);
+                            let currentTimeLimit = this.dateLimit;
+
+                            // console.log(targetTimeRange,currentTimeLimit);
+                            if(targetTimeRange > currentTimeLimit && targetTimeRange < this.standardMaxDate){
+                                console.log("Calandar-immediate");
+                                this.asyncUpdateActivityArray(targetTimeRange);
+                            }else if(targetTimeRange<currentTimeLimit){
+                                console.log("日历信息范围已经在列表中");
+                            }else{
+                                console.log("日期超出信息范围无法加载");
+                            }
+                        }
+                    },{
+                        deep:true,
+                        immediate:true,
+                    }
+                )
             },
-            (newVal)=>{
-                if(newVal.type=='next'){
-                    let nextMonth = this.$refs.calendar.$children[1].nextMonthDatePrefix;
-                    let day = newVal.text.toString().length<2?'0'+newVal.text:newVal.text;
-                    // console.log(nextMonth+'-'+day);
 
-                    let targetTimeRange = Date.parse(nextMonth+'-'+day);
-                    let currentTimeLimit = this.dateLimit;
+            created(){
 
-                    // console.log(targetTimeRange,currentTimeLimit);
-                    if(targetTimeRange > currentTimeLimit && targetTimeRange < this.standardMaxDate){
-                        console.log("Calandar-immediate");
-                        this.asyncUpdateActivityArray(targetTimeRange);
-                    }else if(targetTimeRange<currentTimeLimit){
-                        console.log("日历信息范围已经在列表中");
+            },
+
+            methods: {
+                ...mapActions(["asyncUpdateActivityArray"]),
+                // 计算当前日期活动数目
+                getActivityCount(date){
+                    if(this.dateObject[date]==null||undefined){
+                        return 0;
+                    }
+                    return this.dateObject[date].length;
+                },
+                getActivityContent(date){
+                    if(this.dateObject[date]==null||undefined){
+                        return "";
+                    }
+                    return this.dateObject[date][0]["title"];
+                },
+                isInRange(date){
+                    let begin = this.standardLocalDate;
+                    let end = this.dateLimit;
+                    date = Date.parse(date);
+                    if(date < begin || date > end){
+                        return false;
                     }else{
-                        console.log("日期超出信息范围无法加载");
+                        return true;
+                    }
+                },
+                dateClickHandler(data){
+                    if(data.type=='prev-month'||data.type=='next-month'){
+                        return;
+                    }
+                    let date = data.day;
+                    this.drawerDate = date;
+                    this.drawer = true;
+                }
+            },
+
+            computed:{
+                ...mapState(["activityListLoading","standardMaxDate","standardLocalDate"]),
+                ...mapGetters(["dateLimit","nextIndex","flattedArray"]),
+                dateObject(){
+                    let obj = new Object();
+                    if(this.flattedArray==null||undefined){
+                        return obj;
+                    }
+                    for(let i=0;i<this.flattedArray.length;++i){
+                        if(obj[this.flattedArray[i].startDate] == null || undefined ){
+                            obj[this.flattedArray[i].startDate] = [];
+                            obj[this.flattedArray[i].startDate].push(this.flattedArray[i]);
+                        }else{
+                            obj[this.flattedArray[i].startDate].push(this.flattedArray[i]);
+                        }
+                    }
+                    return obj;
+                },
+                drawerDateTitle(){
+                    if(this.drawerDate==""){
+                        return "";
+                    }
+                    let dateStringArray = new Date(this.drawerDate).toLocaleDateString().split('/');
+                    return dateStringArray[1]+"月"+dateStringArray[2]+"日活动信息";
+                }
+            },
+        };
+        </script>
+
+        <style lang="less" scoped>
+        .is-selected {
+            color: #1989FA;
+        }
+
+        /deep/ .el-calendar-day:hover {
+            background-color:transparent !important;
+        }
+
+        /deep/ td:hover {
+            background-color: #F2F8FE !important;
+        }
+
+        /deep/.el-calendar {
+            td {
+                height:100%;
+            }
+            .el-calendar__body {
+
+                .next,
+                .prev {
+                    color: #C0C4CC;
+
+                    .forbid {
+                        color: #C0C4CC;
                     }
                 }
-            },{
-                deep:true,
-                immediate:true,
-            }
-        )
-    },
-
-    created(){
-
-    },
-
-    methods: {
-        ...mapActions(["asyncUpdateActivityArray"]),
-        // 计算当前日期活动数目
-        getActivityCount(date){
-            if(this.dateObject[date]==null||undefined){
-                return 0;
-            }
-            return this.dateObject[date].length;
-        },
-        getActivityContent(date){
-            if(this.dateObject[date]==null||undefined){
-                return "";
-            }
-            return this.dateObject[date][0]["title"];
-        },
-        isInRange(date){
-            let begin = this.standardLocalDate;
-            let end = this.dateLimit;
-            date = Date.parse(date);
-            if(date < begin || date > end){
-                return false;
-            }else{
-                return true;
-            }
-        },
-        dateClickHandler(data){
-            if(data.type=='prev-month'||data.type=='next-month'){
-                return;
-            }
-            let date = data.day;
-            this.drawerDate = date;
-            this.drawer = true;
-        }
-    },
-
-    computed:{
-        ...mapState(["activityListLoading","standardMaxDate","standardLocalDate"]),
-        ...mapGetters(["dateLimit","nextIndex","flattedArray"]),
-        dateObject(){
-            let obj = new Object();
-            if(this.flattedArray==null||undefined){
-                return obj;
-            }
-            for(let i=0;i<this.flattedArray.length;++i){
-                if(obj[this.flattedArray[i].startDate] == null || undefined ){
-                    obj[this.flattedArray[i].startDate] = [];
-                    obj[this.flattedArray[i].startDate].push(this.flattedArray[i]);
-                }else{
-                    obj[this.flattedArray[i].startDate].push(this.flattedArray[i]);
-                }
-            }
-            return obj;
-        },
-        drawerDateTitle(){
-            if(this.drawerDate==""){
-                return "";
-            }
-            let dateStringArray = new Date(this.drawerDate).toLocaleDateString().split('/');
-            return dateStringArray[1]+"月"+dateStringArray[2]+"日活动信息";
-        }
-    },
-};
-</script>
-
-<style lang="less" scoped>
-.is-selected {
-    color: #1989FA;
-}
-
-/deep/ .el-calendar-day:hover {
-    background-color:transparent !important;
-}
-
-/deep/ td:hover {
-    background-color: #F2F8FE !important;
-}
-
-/deep/.el-calendar {
-    td {
-        height:100%;
-    }
-    .el-calendar__body {
-
-        .next,
-        .prev {
-            color: #C0C4CC;
-
-            .forbid {
-                color: #C0C4CC;
-            }
-        }
-        .el-calendar-day{
-            display: block;
-            // width: 100%;
-            min-height: 85px;
-            height: 100%;
-            padding:0px;
-
-            .cell {
-                display: block;
-                width: 100%;
-                height: 100%;
-
-                p {
-                    margin:0px;
-                }
-
-                .cell-title {
-                    padding-top:8px;
-                    padding-left:8px;
-                    padding-bottom: 12px;
-
-                    font-size: 18px;
-                }
-
-                .cell-content {
-                    padding-bottom:8px;
-                    padding-left:8px;
-
-                    font-size: 14px;
-
+                .el-calendar-day{
                     display: block;
+                    // width: 100%;
+                    min-height: 85px;
+                    height: 100%;
+                    padding:0px;
+
+                    .cell {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+
+                        p {
+                            margin:0px;
+                            white-space: nowrap; // Prevents line breaks in the text
+                            overflow: hidden; // Hides any text that overflows the cell
+                            text-overflow: ellipsis; // Adds an ellipsis to indicate that text has been truncated
+                        }
+
+                        .cell-title {
+                            padding-top:8px;
+                            padding-left:8px;
+                            padding-bottom: 6px;
+
+                            font-size: 18px;
+                        }
+
+                        .cell-content {
+                            padding-bottom:8px;
+                            padding-left:8px;
+
+                            font-size: 14px;
+
+                            display: block;
+                            line-height: 1.2;
+                        }
+                    }
                 }
             }
         }
-    }
-}
 
-.forbid {
-    color:rgb(79, 79, 79);
-}
+        .forbid {
+            color:rgb(79, 79, 79);
+        }
 
-/deep/ .drawer-header{
-    display: block;
-    font-size: 20px;
+        /deep/ .drawer-header{
+            display: block;
+            font-size: 20px;
 
-    padding-top:18px;
-    padding-left:18px;
-    padding-bottom: 18px;
-}
+            padding-top:18px;
+            padding-left:18px;
+            padding-bottom: 18px;
+        }
 
-/deep/ .drawer-content {
-    div {
-        padding-top:12px;
-        margin-left:18px;
-    }
-}
-</style>
+        /deep/ .drawer-content {
+            div {
+                padding-top:12px;
+                margin-left:18px;
+            }
+        }
+
+        @media only screen and (max-width: 600px) {
+            /deep/ .el-calendar-day {
+                min-height: 50px;
+            }
+            /deep/ .cell-title {
+                font-size: 14px;
+                padding-top: 4px;
+                padding-left: 4px;
+                padding-bottom: 4px;
+            }
+            /deep/ .cell-content {
+                font-size: 12px;
+                padding-bottom: 4px;
+                padding-left: 4px;
+                line-height: 1.1;
+            }
+            /deep/ .drawer-header {
+                font-size: 16px;
+                padding-top: 12px;
+                padding-left: 12px;
+                padding-bottom: 12px;
+            }
+            /deep/ .drawer-content div {
+                padding-top: 8px;
+                margin-left: 12px;
+            }
+        }        </style>
+
