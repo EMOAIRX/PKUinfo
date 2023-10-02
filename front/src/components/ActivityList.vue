@@ -44,7 +44,8 @@
                 <template slot-scope="props">
                     <el-descriptions title="活动信息" :column="2" :colon="false">
                         <template slot="extra">
-                            <!-- <el-button type="primary" icon="el-icon-edit" size="mini" @click="feedbackHandler(props.row)"></el-button> -->
+                            <!-- there is an button when i click and can return to herf = props.row.link,which title is "查看推送" -->
+                            <el-button type="primary" @click="redirectToLink(props.row.accountLink)">查看推送</el-button>
                         </template>
                         <el-descriptions-item label="活动名称">{{ props.row.title }}</el-descriptions-item>
                         <!-- 占位？ -->
@@ -70,7 +71,7 @@
             <el-table-column
                 label="活动信息">
                 <template slot-scope="{row}">
-                    {{ row.description }}
+                    {{ row.description.length > 50 ? row.description.slice(0, 50) + '...' : row.description }}
                 </template>
             </el-table-column>
         </el-table>
@@ -140,20 +141,8 @@ export default {
             },
             // 多选选项
             selectionOptions: [{
-                value: '西风骑士团',
-                label: '西风骑士团'
-            }, {
-                value: 'B',
-                label: 'B'
-            }, {
-                value: 'C',
-                label: 'C'
-            }, {
-                value: 'D',
-                label: 'D'
-            }, {
-                value: 'E',
-                label: 'E'
+                value: '信息科学技术学院',
+                label: 'TODO一些关键词筛选标签'
             }],
             // 当前已选选项
             selectedValues: [],
@@ -211,6 +200,10 @@ export default {
             this.dialogTableVisible = true;
             this.feedbackInfo = info;
         },
+        redirectToLink(link) {
+            window.open(link, '_blank');
+        },
+
     },
     
     computed:{

@@ -37,6 +37,8 @@ public class UserController {
 
     // 请求路径示例：localhost:8080/api/user/activity/2023-07-10
     // 时间片大小为30天 起始日期为请求日期
+    private static int counter = 0;
+
     @GetMapping("/api/user/activity/{startDate}")
     public Result selectActivity(@PathVariable Date startDate){
         List<ActivityInfo> activityList = activityService.select(startDate);
@@ -50,6 +52,18 @@ public class UserController {
             activity.setEndDate(new Date(cal.getTimeInMillis()));
         }
         return Result.success(activityList);
+    }
+
+
+    @GetMapping("/api/user/addCounter")
+    public Result addCounter(){
+        counter++;
+        return Result.success(counter);
+    }
+
+    @GetMapping("/api/user/getCounter")
+    public Result getCounter(){
+        return Result.success(counter);
     }
 
     // 请求路径示例：localhost:8080/api/user/activity/week
