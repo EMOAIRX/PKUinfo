@@ -1,0 +1,3 @@
+[submodule "PKUInfo-Frontend"]
+	path = PKUInfo-Frontend
+	url = https://github.com/wjsoj/PKUInfo-Frontend.git

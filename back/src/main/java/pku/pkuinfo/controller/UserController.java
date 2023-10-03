@@ -41,6 +41,7 @@ public class UserController {
 
     @GetMapping("/api/user/activity/{startDate}")
     public Result selectActivity(@PathVariable Date startDate){
+        this.counter++;
         List<ActivityInfo> activityList = activityService.select(startDate);
         for (ActivityInfo activity : activityList) {
             Calendar cal = Calendar.getInstance();
@@ -84,8 +85,12 @@ public class UserController {
     @PostMapping("/api/user/submit/link")
     public Result processActivityLink(@RequestBody Link url){
         System.out.println("接收到链接: " + url);
-        Boolean res = activityProcessService.processActivityLink(url);
-        System.out.println("返回结果: " + res);
-        return Result.auto(res,"发送成功","链接错误",null);
+        new Thread(() -> {
+            Boolean res = activityProcessService.processActivityLink(url);
+            System.out.println("处理结果: " + res);
+        }).start();
+        System.out.println("是否接受链接成功 " + url);
+        return Result.success();
     }
+
 }

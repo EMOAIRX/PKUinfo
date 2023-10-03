@@ -2,11 +2,16 @@
 	<div>
 		<el-container>
 			<!-- Header部分 可以考虑整点图片什么的？ -->
-			<el-header> star: https://github.com/EMOAIRX/PKUinfo                                   	 contact with wechat EMOAIRX  [求转发求推广] </el-header>
+			<el-header> star: https://github.com/EMOAIRX/PKUinfo                                   	 </el-header>
 			<el-main>
 				<MainMenu></MainMenu>
 			</el-main>
 			<el-footer>Counter: {{ Math.floor(counterData / 4) }}</el-footer>
+			<!-- <template>
+				<div>
+					<img src="../public/二维码.jpg" alt="二维码" style="max-width: 50%; height: auto;">
+				</div>
+			</template> -->
 			<!-- Footer部分 后期备案等信息可以写在这里-->
 			<!-- <el-footer>Footer</el-footer> -->
 		</el-container>

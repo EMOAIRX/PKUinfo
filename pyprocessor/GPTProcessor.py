@@ -25,7 +25,6 @@ class GPTProcessor:
             top_p=0.1,
             incremental=True
         )
-        print(response)
         result = ''
         for event in response.events():
             if event.event == "add":
@@ -33,7 +32,7 @@ class GPTProcessor:
         #delete ' ' from the first
         while (len(result) > 0 and result[0] == ' '):
             result = result[1:]
-        # print('ANS=',result)
+        print('ANS=',result)
         return result
 
     def txt2json(self, text):

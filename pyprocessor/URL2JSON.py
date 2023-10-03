@@ -24,10 +24,10 @@ def check_is_repeated(content : WebContent) -> bool:
 
 
 class URL2JSON:
-    def __init__(self):
+    def __init__(self,ocr_reader):
         self.content_getter = ContentGetter()
         self.processor = GPTProcessor()
-        self.ocr_reader = EasyOCR()
+        self.ocr_reader = ocr_reader
 
     def get_jsonlist(self, url, check_repeated = True):
         import json
@@ -44,7 +44,8 @@ class URL2JSON:
         #if time < 2023.08.01 raise TOO EARLY
         # POSTER TIME BE LIKE "2023-05-25 23:39" as a str
         post_time = content.publish_time
-        if (post_time[3] == '2') or (post_time[6] < '8'):
+        print(post_time)
+        if (post_time[3] == '2') or (post_time[5]=='0' and post_time[6] < '8'):
            raise Exception("TOO EARLY") 
 
         #通过gpt将网页内容转为标准化json
@@ -58,14 +59,11 @@ class URL2JSON:
             processed_text += '\n' + txt_tmp 
         
         jsondata_list = None
-        for i in range(1):
-            try:
-                jsondata_list = self.processor.Text_to_JSON(processed_text)
-                print("JSON_SUCCESS")
-                break
-            except Exception as e:
-                print(e)
-                continue
+        try:
+            jsondata_list = self.processor.Text_to_JSON(processed_text)
+            print("JSON_SUCCESS")
+        except Exception as e:
+            raise e
         if jsondata_list is None:
             Log = open("log.txt", "a")
             # Log.write("URL2JSON.py: " + str(e) + "\n")
@@ -84,6 +82,9 @@ class URL2JSON:
             result_list.append(jsondata)
         print("JSON数据:")
         print(result_list)
+        if check_repeated:
+            if check_is_repeated(content):
+                raise Exception("Repeated Content")
         if check_repeated:
             url = 'http://localhost:8080/api/admin/record'
             headers = {'Content-Type': 'application/json'}
@@ -123,8 +124,8 @@ if __name__ == '__main__':
     # url = 'http://mp.weixin.qq.com/s?__biz=Mzg2Njc1NjM2OA==&mid=2247494924&idx=1&sn=5c4b1fcf65fab88214c5cabe64e6fbfd&chksm=ce475f73f930d665e8052799120ae478b33d802fede90016c929f89231b3abdd29fb786cad3d#rd'
     # url = 'https://mp.weixin.qq.com/s?__biz=MzI0ODcwNjkwNw==&mid=2247495765&idx=1&sn=51d1353d9d34d2c12c39c45559aca05c&chksm=e99e1261dee99b77e3433683ea5a0dc65db8feede318b3b556adcce9873a5d70edafdaa65272#rd'
     # url = 'https://mp.weixin.qq.com/s?__biz=MjM5MTg0MDE4NQ==&mid=2651231260&idx=2&sn=b1e88e137d12b17bf654b9bb307d7a83&chksm=bd5d56ca8a2adfdc9f6e3fbbf7c12009a2e1700b0e99c863bea737f503bed3606955db0298cd#rd'
-    url = 'http://mp.weixin.qq.com/s?__biz=MzI0ODcwNjkwNw==&mid=2247495962&idx=1&sn=7c1337fff4e71bca56bc58e1f648c129&chksm=e99e132edee99a389cd790d87cea38e88b72ed4e87456ab43ca021e67a1da18d0e389614c78c#rd'
-    url2json = URL2JSON()
-    print(url2json.get_jsonlist(url))
+    url = 'https://mp.weixin.qq.com/s/dVwVezWK5eNTqUW_3sevng'
+    url2json = URL2JSON(EasyOCR())
+    print(url2json.get_jsonlist(url, check_repeated = False))
     # strr = '{   "event_name": "2023 国际华语控烟辩论赛邀请赛半决赛",   "event_time": [     "2023-08-11 23:59"   ],   "location": null,   "organizational_unit": "北大辩协",   "event_summary": "健言青春·2023 国际华语控烟辩论赛邀请赛半决赛邀您共同参与！"   }'
     # print(json.loads(strr))
