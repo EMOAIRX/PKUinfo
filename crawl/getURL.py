@@ -37,8 +37,8 @@ if __name__ == '__main__':
     def POSTER(link):
         import json
         headers = {'Content-Type': 'application/json'}
-        url = 'http://localhost:8080/api/user/submit/link'
-        data = {'link': link}
+        url = 'http://localhost:9001/'
+        data = {'url': link}
         r = requests.post(url, data=json.dumps(data), headers=headers)
         print(r)
         print(r.text)

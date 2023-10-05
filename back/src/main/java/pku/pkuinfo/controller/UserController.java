@@ -14,6 +14,8 @@ import java.util.Calendar;
 
 import java.sql.Date;
 import java.util.List;
+// import java.io.FileWriter;
+// import java.io.IOException;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -38,6 +40,7 @@ public class UserController {
     // 请求路径示例：localhost:8080/api/user/activity/2023-07-10
     // 时间片大小为30天 起始日期为请求日期
     private static int counter = 0;
+    // private static List<String> urlList = null;
 
     @GetMapping("/api/user/activity/{startDate}")
     public Result selectActivity(@PathVariable Date startDate){
@@ -91,6 +94,31 @@ public class UserController {
         }).start();
         System.out.println("是否接受链接成功 " + url);
         return Result.success();
-    }
+    
+    // @PostMapping("/api/user/submit_ui/link")
+    // public Result UIprocessActivityLink(@RequestBody Link url){
+    //     System.out.println("接收到链接: " + url);
+    //     try {
+    //         FileWriter writer = new FileWriter("received.txt", true);
+    //         writer.write(url + "\n");
+    //         writer.close();
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return Result.success();
+    // }
+
+    // @PostMapping("/api/user/query_submited")
+    // public Result UIprocessActivityLink(@RequestBody Link url){
+    //     System.out.println("接收到链接: " + url);
+    //     try {
+    //         FileWriter writer = new FileWriter("received.txt", true);
+    //         writer.write(url + "\n");
+    //         writer.close();
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return Result.success();
+    // }
 
 }
