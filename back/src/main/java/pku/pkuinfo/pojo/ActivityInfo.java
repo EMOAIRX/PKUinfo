@@ -6,13 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityInfo {
+public class ActivityInfo implements Serializable {
     private Integer id;
 
     private String title;

@@ -6,13 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WeekActivityInfo {
+public class WeekActivityInfo implements Serializable {
     private String title;
 
     private String address;

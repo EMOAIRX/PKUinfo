@@ -1,6 +1,7 @@
 package pku.pkuinfo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import pku.pkuinfo.mapper.ActivityMapper;
 import pku.pkuinfo.pojo.ActivityInfo;
@@ -22,11 +23,14 @@ public class ActivityOperationService {
         return (res != null);
     }
 
+
+    @Cacheable(value = "activity", key = "#startDate")
     public List<ActivityInfo> select(Date startDate){
         Date endDate = new Date(startDate.getTime() + ONE_DAY * 30);
         return activityMapper.selectActivity(startDate,endDate);
     }
 
+    @Cacheable(value = "activity_week", key = "#startDate")
     public List<WeekActivityInfo> weekselect(Date startDate){
         Date endDate = new Date(startDate.getTime() + ONE_DAY * 7);
         return activityMapper.selectWeekActivity(startDate, endDate);

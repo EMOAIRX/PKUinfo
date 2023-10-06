@@ -1,6 +1,7 @@
 package pku.pkuinfo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 import pku.pkuinfo.pojo.ActivityFeedbackInfo;
 import pku.pkuinfo.pojo.ActivityInfo;

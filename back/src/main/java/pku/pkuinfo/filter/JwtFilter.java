@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import pku.pkuinfo.utils.Result;
 import pku.pkuinfo.utils.JwtUtils;
 
@@ -17,14 +18,13 @@ import java.util.Map;
  * JWT过滤器
  */
 @Slf4j
-//@WebFilter(filterName = "JwtFilter", urlPatterns = "/api/admin/*")
-@WebFilter(filterName = "JwtFilter", urlPatterns = "/*")
+@WebFilter(filterName = "JwtFilter", urlPatterns = "/api/admin/*")
 public class JwtFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        System.out.println("Filter Established");
         Filter.super.init(filterConfig);
-        System.out.println("Filter established");
     }
 
     @Override
@@ -33,7 +33,12 @@ public class JwtFilter implements Filter {
         final HttpServletResponse response = (HttpServletResponse) res;
         response.setCharacterEncoding("UTF-8");
 
-        System.out.println("Request detected");
+        // 排除登录接口
+        String url = request.getRequestURI();
+        if (url.equals("/api/admin/login")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         // 放行预检请求
         if ("OPTIONS".equals(request.getMethod())) {
