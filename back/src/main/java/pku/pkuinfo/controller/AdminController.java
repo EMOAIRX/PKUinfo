@@ -11,6 +11,9 @@ import pku.pkuinfo.service.RecordOperationService;
 import pku.pkuinfo.utils.Result;
 import java.util.List;
 
+//TODO 管理员端的鉴权
+//TODO 缓存
+//TODO 管理员端的功能
 @CrossOrigin(origins = "*")
 @RestController
 public class AdminController {
@@ -47,7 +50,7 @@ public class AdminController {
     }
 
     @PostMapping("/api/admin/record")
-    public Result insertActivityRecod(@RequestBody RecordInfo info){
+    public Result insertActivityRecord(@RequestBody RecordInfo info){
         // 对象数据
         Boolean res = recordService.insert(info);
         if(res){
