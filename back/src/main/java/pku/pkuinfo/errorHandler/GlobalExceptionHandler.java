@@ -1,4 +1,4 @@
-package pku.pkuinfo.filter.errorHandler;
+package pku.pkuinfo.errorHandler;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
