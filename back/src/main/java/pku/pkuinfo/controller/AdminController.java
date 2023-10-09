@@ -33,29 +33,73 @@ public class AdminController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    /**
+     * 添加指定活动
+     * @param info 活动信息
+     * @return result
+     */
     @PostMapping ("/api/admin/activity")
     public Result insertActivityInformation(@RequestBody ActivityInfo info){
         // 对象数据
-        Boolean res = activityService.insert(info);
-        if(res){
-            return Result.success();
-        }else{
+        Integer affected = activityService.insert(info);
+        if(affected==1){
+            return Result.success("插入成功");
+        }else if(affected<1){
             return Result.error("插入失败");
+        }else{
+            return Result.error("Fatal Error咯");
         }
     }
 
-    @GetMapping("/api/admin/activityfeedback")
-    public List<ActivityFeedbackInfo> selectActivityFeedbackInformation(){
-        return feedbackService.select();
+    /**
+     * 删除指定活动
+     * 有一说一这里不符合Restful接口风格，主要是配合WebFilter
+     * @param id 活动信息对应的ID
+     * @return result
+     */
+    @DeleteMapping("api/admin/activity/delete/{id}")
+    public Result deleteActivityInformation(@PathVariable Integer id){
+        Integer affected = activityService.delete(id);
+        if(affected==1){
+            return Result.success("删除成功");
+        }else if(affected<1){
+            return Result.error("删除失败");
+        }else{
+            return Result.error("Fatal Error咯");
+        }
     }
 
-    // 接收URL请求 转发至Python端
+    //@GetMapping("/api/admin/activityfeedback")
+    //public List<ActivityFeedbackInfo> selectActivityFeedbackInformation(){
+    //    return feedbackService.select();
+    //}
+
+    /**
+     * 获取反馈列表
+     * 未对列表内容长度做检查，可能为空
+     * @return 反馈列表
+     */
+    @GetMapping("/api/admin/activityfeedback")
+    public Result selectActivityFeedbackInformation(){
+        return Result.success("获取成功",feedbackService.select());
+    }
+
+    /**
+     * 接收URL请求 转发至Python端
+     * @param targeturl 目标URL
+     * @return 成功
+     */
     @PostMapping("/api/admin/activityurl/{targeturl}")
     public Result urlTransmit(@PathVariable String targeturl){
         System.out.println(targeturl);
         return Result.success();
     }
 
+    /**
+     *
+     * @param info 记录数据
+     * @return result
+     */
     @PostMapping("/api/admin/record")
     public Result insertActivityRecord(@RequestBody RecordInfo info){
         // 对象数据
@@ -67,6 +111,11 @@ public class AdminController {
         }
     }
 
+    /**
+     *
+     * @param info 记录数据
+     * @return result
+     */
     @PostMapping("/api/admin/check")
     public Result checkActivityRecord(@RequestBody RecordInfo info){
         // 对象数据
@@ -79,6 +128,11 @@ public class AdminController {
         }
     }
 
+    /**
+     * 登录接口
+     * @param admin 管理员账户与密码
+     * @return result 成功会返回一个token
+     */
     @PostMapping("/api/admin/login")
     public Result login(@RequestBody Admin admin){
         String res = authenticationService.login(admin);

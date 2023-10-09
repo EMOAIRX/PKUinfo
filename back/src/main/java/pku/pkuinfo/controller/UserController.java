@@ -19,7 +19,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RestController
 public class UserController {
-
+    private static int counter = 0;
     @Autowired
     private ActivityOperationService activityService;
 
@@ -29,17 +29,21 @@ public class UserController {
     @Autowired
     private ActivityProcessService activityProcessService;
 
-    // 测试接口
+    /**
+     * 测试接口
+     * @return Hello, world
+     */
     @RequestMapping("/api/test-string")
     public String test(){
         return "Hello, world";
     }
 
-
-    // 请求路径示例：localhost:8080/api/user/activity/2023-07-10
-    // 时间片大小为30天 起始日期为请求日期
-    private static int counter = 0;
-
+    /**
+     * 请求路径示例：localhost:8080/api/user/activity/2023-07-10
+     * 时间片大小为30天 起始日期为请求日期
+     * @param startDate 起始日期
+     * @return result
+     */
     @GetMapping("/api/user/activity/{startDate}")
     public Result selectActivity(@PathVariable Date startDate){
         this.counter++;
@@ -56,19 +60,29 @@ public class UserController {
         return Result.success(activityList);
     }
 
-
+    /**
+     * 增加计数
+     * @return success
+     */
     @GetMapping("/api/user/addCounter")
     public Result addCounter(){
         counter++;
         return Result.success(counter);
     }
 
+    /**
+     * 获取计数
+     * @return result
+     */
     @GetMapping("/api/user/getCounter")
     public Result getCounter(){
         return Result.success(counter);
     }
 
-    // 请求路径示例：localhost:8080/api/user/activity/week
+    /**
+     * 请求路径示例：localhost:8080/api/user/activity/week
+     * @return result
+     */
     @GetMapping("/api/user/activity/week")
     public Result selectWeekActivity(){
         Calendar calendar = Calendar.getInstance();
@@ -77,12 +91,22 @@ public class UserController {
         return Result.success(activityList);
     }
 
+    /**
+     * 添加反馈信息
+     * @param feedbackInfo 反馈信息
+     * @return result
+     */
     @PostMapping("/api/user/feedback/activity")
     public Result insertFeedbackActivity(@RequestBody ActivityFeedbackInfo feedbackInfo){
         Boolean res = feedbackService.insert(feedbackInfo);
         return Result.success();
     }
 
+    /**
+     * 添加活动链接
+     * @param url 目标URL
+     * @return result
+     */
     @PostMapping("/api/user/submit/link")
     public Result processActivityLink(@RequestBody Link url){
         System.out.println("接收到链接: " + url);

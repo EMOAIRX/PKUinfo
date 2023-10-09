@@ -9,6 +9,10 @@
         VALUES (#{id}, #{title}, #{address}, #{startDate}, #{endDate},#{startTime}, #{endTime}, #{description}, #{college}, #{accountLink}, #{extraInfo})
     </insert>
 
+    <delete id="deleteActivity" parameterType="Integer">
+        DELETE FROM activity WHERE id = #{id}
+    </delete>
+
     <select id="selectActivity" parameterType="java.sql.Date" resultType="pku.pkuinfo.pojo.ActivityInfo">
         SELECT * FROM activity WHERE start_date BETWEEN DATE_SUB(#{startDate}, INTERVAL 1 DAY) AND DATE_SUB(#{endDate}, INTERVAL 1 DAY)
     </select>

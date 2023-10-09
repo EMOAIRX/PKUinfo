@@ -2,12 +2,14 @@ package pku.pkuinfo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pku.pkuinfo.mapper.FeedbackMapper;
 import pku.pkuinfo.pojo.ActivityFeedbackInfo;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class FeedbackOperationService {
 
     @Autowired

@@ -7,7 +7,6 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import pku.pkuinfo.utils.Result;
 import pku.pkuinfo.utils.JwtUtils;
 
@@ -18,7 +17,7 @@ import java.util.Map;
  * JWT过滤器
  */
 @Slf4j
-@WebFilter(filterName = "JwtFilter", urlPatterns = "/api/admin/*")
+@WebFilter(filterName = "JwtFilter", urlPatterns = "/api/admin/activity/delete/*")
 public class JwtFilter implements Filter {
 
     @Override

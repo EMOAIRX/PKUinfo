@@ -13,6 +13,8 @@ import java.util.List;
 public interface ActivityMapper {
     public Integer insertActivity(ActivityInfo info);
 
+    public Integer deleteActivity(Integer id);
+
     public List<ActivityInfo> selectActivity(Date startDate,Date endDate);
 
     public List<WeekActivityInfo> selectWeekActivity(Date startDate,Date endDate);

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pku.pkuinfo.mapper.AccessMapper">
+    <select id="login" resultType="pku.pkuinfo.pojo.Admin">
+        SELECT username,password FROM admin WHERE username=#{username}
+    </select>
+</mapper>
