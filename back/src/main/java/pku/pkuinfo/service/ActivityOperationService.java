@@ -1,7 +1,9 @@
 package pku.pkuinfo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pku.pkuinfo.mapper.ActivityMapper;
@@ -20,10 +22,18 @@ public class ActivityOperationService {
 
     private final long ONE_DAY = 1000 * 60 * 60 * 24;
 
+    @Caching(evict = {
+            @CacheEvict(value = "activity",allEntries = true),
+            @CacheEvict(value = "activity_week",allEntries = true)
+    })
     public Integer insert(ActivityInfo info){
         return activityMapper.insertActivity(info);
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "activity",allEntries = true),
+        @CacheEvict(value = "activity_week",allEntries = true)
+    })
     public Integer delete(Integer id){
         return activityMapper.deleteActivity(id);
     }
