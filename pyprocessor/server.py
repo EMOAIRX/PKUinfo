@@ -100,6 +100,7 @@ def handle_request_nocheck():
 
 @app.route('/getEmbedding', methods=['POST'])
 def getEmbedding():
+    print('getEmbedding')
     import zhipuai
     from keys import zhipuai_APIKEY
     data = request.data.decode('utf-8')
@@ -109,6 +110,8 @@ def getEmbedding():
         model="text_embedding",
         prompt=text,
     )
+    print(response)
+    embedding = response['data']['embedding']
     return jsonify({'embedding': embedding})
 
 if __name__ == "__main__":

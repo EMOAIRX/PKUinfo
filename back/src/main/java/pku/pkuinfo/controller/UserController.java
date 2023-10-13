@@ -57,6 +57,22 @@ public class UserController {
         return Result.success(activityList);
     }
 
+    // 三个参数 text , startDate , endDate
+    @GetMapping("/api/user/activity/search/{text}/{startDate}/{endDate}")
+    public Result searchActivity(@PathVariable String text, @PathVariable Date startDate, @PathVariable Date endDate){
+        List<ActivityInfo> activityList = activityService.search(text, startDate, endDate);
+        for (ActivityInfo activity : activityList) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(activity.getStartDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setStartDate(new Date(cal.getTimeInMillis()));
+            cal.setTime(activity.getEndDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setEndDate(new Date(cal.getTimeInMillis()));
+        }
+        return Result.success(activityList);
+    }
+
 
     @GetMapping("/api/user/addCounter")
     public Result addCounter(){
@@ -67,15 +83,6 @@ public class UserController {
     @GetMapping("/api/user/getCounter")
     public Result getCounter(){
         return Result.success(counter);
-    }
-
-    // 请求路径示例：localhost:8080/api/user/activity/week
-    @GetMapping("/api/user/activity/week")
-    public Result selectWeekActivity(){
-        Calendar calendar = Calendar.getInstance();
-        Date startDate = new Date(calendar.getTimeInMillis());
-        List<WeekActivityInfo> activityList = activityService.weekselect(startDate);
-        return Result.success(activityList);
     }
 
     @PostMapping("/api/user/feedback/activity")
