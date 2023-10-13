@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 public class UserController {
 
+    private static int counter = 0;
     @Autowired
     private ActivityOperationService activityService;
 
@@ -39,8 +40,6 @@ public class UserController {
 
     // 请求路径示例：localhost:8080/api/user/activity/2023-07-10
     // 时间片大小为30天 起始日期为请求日期
-    private static int counter = 0;
-    // private static List<String> urlList = null;
 
     @GetMapping("/api/user/activity/{startDate}")
     public Result selectActivity(@PathVariable Date startDate){
@@ -94,7 +93,7 @@ public class UserController {
         }).start();
         System.out.println("是否接受链接成功 " + url);
         return Result.success();
-    
+    }
     // @PostMapping("/api/user/submit_ui/link")
     // public Result UIprocessActivityLink(@RequestBody Link url){
     //     System.out.println("接收到链接: " + url);
