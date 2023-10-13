@@ -98,5 +98,18 @@ def handle_request_nocheck():
             f.flush()
         return jsonify({'info': info})
 
+@app.route('/getEmbedding', methods=['POST'])
+def getEmbedding():
+    import zhipuai
+    from keys import zhipuai_APIKEY
+    data = request.data.decode('utf-8')
+    text = json.loads(data)['text']
+    zhipuai.api_key = zhipuai_APIKEY
+    response = zhipuai.model_api.invoke(
+        model="text_embedding",
+        prompt=text,
+    )
+    return jsonify({'embedding': embedding})
+
 if __name__ == "__main__":
     app.run(host="localhost", port=9001)

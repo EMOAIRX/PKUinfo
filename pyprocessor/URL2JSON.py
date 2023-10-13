@@ -113,6 +113,7 @@ class URL2JSON:
         activityInfo["college"] = json_data["organizational_unit"][:40] if json_data["organizational_unit"] is not None else None
         activityInfo["accountLink"] = json_data["url"][:255] if json_data["url"] is not None else None
         activityInfo["extraInfo"] = json_data["event_time"]
+        activityInfo["address"] = str(activityInfo["address"])
         return activityInfo
 
 

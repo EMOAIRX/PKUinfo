@@ -62,7 +62,7 @@ class GPTProcessor:
     def Text_to_JSON(self, text):
         try:
             my_messages = [
-                {"role": "system", "content": "Now that you are engaged in professional text processing, please let me know if the push below is a preview of an event (such as a lecture or ticket collection) （不包括活动总结). If so, please use JSON format to tell me the 'event_name', 'event_time', 'location', 'organizational_unit'. 时间尽可能规范到特定的时刻，如果有多个时间请一并输出，如没有则以null存在，推送发布时间为2023年，如果有多个活动，请返回list，如果没有则返回空list。Otherwise, tell me the activity category it belongs to. please use JSON format!去除内容中的所有引号的存在"},
+                {"role": "system", "content": "Now that you are engaged in professional text processing, please let me know if the push below is a preview of an event (such as a lecture or ticket collection) （不包括活动总结). If so, please use JSON format to tell me the 'event_name', 'event_time', 'location', 'organizational_unit'. 时间尽可能规范到特定的时刻，如果有多个时间请一并输出，如没有则以null存在，推送发布时间为2023年，如果没有则返回空list。Otherwise, tell me the activity category it belongs to. please use JSON format!去除内容中的所有引号的存在"},
                 {"role": "user", "content": text + "please use JSON format!! 如果出现了内容中的引号,请不要存在,以防止json格式无法读取"},
             ]
             infolist = self.ask_chatgpt(my_messages)
