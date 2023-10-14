@@ -114,5 +114,27 @@ def getEmbedding():
     embedding = response['data']['embedding']
     return jsonify({'embedding': embedding})
 
+@app.route('/getResponse', methods=['POST'])
+def getResponse():
+    print('getResponse')
+    import zhipuai
+    from keys import zhipuai_APIKEY
+    data = request.data.decode('utf-8')
+    text = json.loads(data)['text']
+    print("data = ",data)
+    print("input text = ",text)
+    zhipuai.api_key = zhipuai_APIKEY
+    response = zhipuai.model_api.invoke(
+        model="chatglm_std",
+        prompt=[
+            {"role": "user", "content": text},
+        ],
+    )
+    print(response)
+    print(response['data']['choices'][0]['content'])
+    response = response['data']['choices'][0]['content']
+    print(response)
+    return jsonify({'response': response})
+
 if __name__ == "__main__":
     app.run(host="localhost", port=9001)

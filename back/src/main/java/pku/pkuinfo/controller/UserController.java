@@ -14,6 +14,8 @@ import java.util.Calendar;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 // import java.io.FileWriter;
 // import java.io.IOException;
 
@@ -57,10 +59,87 @@ public class UserController {
         return Result.success(activityList);
     }
 
+
+    @GetMapping("/api/user/activity/talking/{text}/{startDate}/{endDate}")
+    public Result talking(@PathVariable String text, @PathVariable Date startDate, @PathVariable Date endDate){
+        List<ActivityInfo> activityList = activityService.search(text, startDate, endDate);
+        String appendix = "";
+        Integer length = activityList.size();
+        if (length > 10) {
+            length = 10;
+        }
+        for (int i = 0; i < length; i++) {
+            appendix += activityList.get(i).getDescription();
+        }
+        String answer = activityService.talking(text,appendix);
+        return Result.success(answer);
+    }
+
+
+    @GetMapping("/api/user/activity_with_tags/{startDate}")
+    public Result selectActivity_with_tags(@PathVariable Date startDate){
+        this.counter++;
+        List<ActivityInfo> activityList = activityService.select(startDate);
+        List<String> tags = new ArrayList<>();
+        for (ActivityInfo activity : activityList) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(activity.getStartDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setStartDate(new Date(cal.getTimeInMillis()));
+            cal.setTime(activity.getEndDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setEndDate(new Date(cal.getTimeInMillis()));
+            tags.add(activityService.query_tag(activity));
+        }
+        return Result.success(
+            new HashMap<String, Object>(){{
+                put("activityList", activityList);
+                put("tags", tags);
+            }}
+        );
+    }
+    @GetMapping("/api/user/activity_with_tags/{startDate}/{endDate}")
+    public Result selectActivity_with_tags_2(@PathVariable Date startDate, @PathVariable Date endDate){
+        this.counter++;
+        List<ActivityInfo> activityList = activityService.select(startDate, endDate);
+        List<String> tags = new ArrayList<>();
+        for (ActivityInfo activity : activityList) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(activity.getStartDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setStartDate(new Date(cal.getTimeInMillis()));
+            cal.setTime(activity.getEndDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setEndDate(new Date(cal.getTimeInMillis()));
+            tags.add(activityService.query_tag(activity));
+        }
+        return Result.success(
+            new HashMap<String, Object>(){{
+                put("activityList", activityList);
+                put("tags", tags);
+            }}
+        );
+    }
+
     // 三个参数 text , startDate , endDate
     @GetMapping("/api/user/activity/search/{text}/{startDate}/{endDate}")
     public Result searchActivity(@PathVariable String text, @PathVariable Date startDate, @PathVariable Date endDate){
         List<ActivityInfo> activityList = activityService.search(text, startDate, endDate);
+        for (ActivityInfo activity : activityList) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(activity.getStartDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setStartDate(new Date(cal.getTimeInMillis()));
+            cal.setTime(activity.getEndDate());
+            cal.add(Calendar.DATE, 1);
+            activity.setEndDate(new Date(cal.getTimeInMillis()));
+        }
+        return Result.success(activityList);
+    }
+
+    @GetMapping("/api/user/activity/search_tag/{text}/{startDate}/{endDate}")
+    public Result searchActivity_tag(@PathVariable String text, @PathVariable Date startDate, @PathVariable Date endDate){
+        List<ActivityInfo> activityList = activityService.search_tag(text, startDate, endDate);
         for (ActivityInfo activity : activityList) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(activity.getStartDate());
