@@ -45,7 +45,7 @@ public class UserController {
 
     @GetMapping("/api/user/activity/{startDate}")
     public Result selectActivity(@PathVariable Date startDate){
-        this.counter++;
+        // this.counter++;
         List<ActivityInfo> activityList = activityService.select(startDate);
         for (ActivityInfo activity : activityList) {
             Calendar cal = Calendar.getInstance();
