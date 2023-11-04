@@ -20,3 +20,24 @@ There are several features and improvements planned for PKUINFO:
 2. 基于关键词等的搜索
 
 3. 修复现有bug
+
+---
+
+如何快速开始？
+
+1、`git clone https://github.com/EMOAIRX/PKUinfo.git`
+
+2、在crawl中，修改`nameList.txt`，填写公众号和fakeid，新建`tokens.py`，填写TOKEN,COOKIE,USER_AGENT
+
+3、在pyprocessor中，新建`keys.py`，以使用chatgpt/zhipuai/其它LLM
+
+4、部署前端，使用npm run build即可
+
+5、运行后端，在back中，使用mvn spring-boot:run即可，
+
+6、运行后端2，在pyprocessor中，python3 server.py即可
+
+7、运行爬虫，在crawl中，使用python3 getURL.py
+
+
+
