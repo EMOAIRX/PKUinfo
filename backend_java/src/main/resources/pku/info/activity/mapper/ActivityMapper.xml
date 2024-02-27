@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pku.info.activity.mapper.ActivityMapper">
+    <select id="getWeekActivity" resultType="pku.info.activity.entity.Activity">
+        WITH view_count(id, count) AS ( SELECT activity_id, SUM(view_count) FROM t_activity_view GROUP BY activity_id)
+        SELECT * FROM (t_activity_info AS AI INNER JOIN view_count AS VC ON AI.id = VC.id) ${ew.customSqlSegment};
+    </select>
+
+    <select id="getActivityCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) as count FROM t_activity_info WHERE start_date BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <select id="getSubscribedActivity" resultType="pku.info.activity.entity.Activity">
+        WITH t_user_subscribe(activity_id) AS (SELECT activity_id FROM t_activity_subscription WHERE user_id = #{id})
+        SELECT * FROM t_activity_info AS AI INNER JOIN t_user_subscribe AS US ON AI.id = US.activity_id WHERE AI.start_date >= #{now}
+    </select>
+</mapper>
