@@ -9,6 +9,7 @@ import pku.info.account.service.AdminService;
 import pku.info.common.Result;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class AdminController {
     @Resource
     private AdminService adminService;

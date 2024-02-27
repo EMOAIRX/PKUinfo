@@ -8,6 +8,7 @@ import pku.info.account.service.UserService;
 import pku.info.common.Result;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class UserController {
     @Resource
     private UserService userService;

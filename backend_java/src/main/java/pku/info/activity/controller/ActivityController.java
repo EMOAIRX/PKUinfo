@@ -10,6 +10,7 @@ import pku.info.common.Result;
 import java.sql.Date;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class ActivityController {
     @Resource
     private ActivityService activityService;
