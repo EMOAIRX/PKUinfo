@@ -1,0 +1,46 @@
+nohup: ignoring input
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.2)
+
+2024-02-28T16:02:28.272Z  INFO 4011941 --- [           main] pku.info.InfoApplication                 : Starting InfoApplication v0.0.1-SNAPSHOT using Java 18.0.2-ea with PID 4011941 (/home/info/info2.0/Info2.0/backend_java/target/info-0.0.1-SNAPSHOT.jar started by info in /home/info/info2.0/Info2.0/backend_java)
+2024-02-28T16:02:28.276Z  INFO 4011941 --- [           main] pku.info.InfoApplication                 : No active profile set, falling back to 1 default profile: "default"
+2024-02-28T16:02:29.040Z  INFO 4011941 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2024-02-28T16:02:29.044Z  INFO 4011941 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-02-28T16:02:29.071Z  INFO 4011941 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 13 ms. Found 0 Redis repository interfaces.
+2024-02-28T16:02:29.640Z  INFO 4011941 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-02-28T16:02:29.651Z  INFO 4011941 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-02-28T16:02:29.651Z  INFO 4011941 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-02-28T16:02:29.679Z  INFO 4011941 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2024-02-28T16:02:29.680Z  INFO 4011941 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1296 ms
+Logging initialized using 'class org.apache.ibatis.logging.stdout.StdOutImpl' adapter.
+Initialization Sequence datacenterId:16 workerId:21
+ _ _   |_  _ _|_. ___ _ |    _ 
+| | |\/|_)(_| | |_\  |_)||_|_\ 
+     /               |         
+                        3.5.5 
+Can not find table primary key in Class: "pku.info.activity.entity.Subscription".
+2024-02-28T16:02:30.377Z  WARN 4011941 --- [           main] c.b.m.core.injector.DefaultSqlInjector   : class pku.info.activity.entity.Subscription ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.
+2024-02-28T16:02:30.872Z  WARN 4011941 --- [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2024-02-28T16:02:30.896Z  INFO 4011941 --- [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2024-02-28T16:02:30.910Z ERROR 4011941 --- [           main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
