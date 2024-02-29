@@ -4,7 +4,9 @@ import json
 from keys import openai_APIKEY, openai_BASE, zhipuai_APIKEY
 import zhipuai
 from datetime import datetime
+from zhipuai import ZhipuAI
 import re
+import tag_helper
 class GPTProcessor:
     def __init__(self):
         openai.api_key = openai_APIKEY
@@ -14,21 +16,19 @@ class GPTProcessor:
 
     def ask_chatgpt(self, my_messages): #可以做异步，和GPT连接请求发出后，在全部完成前可以切换到其它线程
         print({"role": "user", "content": my_messages[0]['content'] + '\n' + my_messages[1]['content']})
-        response = zhipuai.model_api.sse_invoke(
+        client = ZhipuAI(api_key=zhipuai_APIKEY) # 请填写您自己的APIKey
+        response = client.chat.completions.create(
             model="chatglm_pro",
-            prompt=[
+            messages=[
                 {"role": "user", "content": my_messages[0]['content']},
                 {"role": "assistant", "content": "好的"},
                 {"role": "user", "content": my_messages[1]['content']},
-            ],
-            temperature=0.95,
-            top_p=0.1,
-            incremental=True
+            ],  
         )
         result = ''
-        for event in response.events():
-            if event.event == "add":
-                result += event.data
+        for i in range(len(response.choices)):
+            result += response.choices[i].message.content
+        
         #delete ' ' from the first
         while (len(result) > 0 and result[0] == ' '):
             result = result[1:]
@@ -62,7 +62,7 @@ class GPTProcessor:
     def Text_to_JSON(self, text):
         try:
             my_messages = [
-                {"role": "system", "content": "Now that you are engaged in professional text processing, please let me know if the push below is a preview of an event (such as a lecture or ticket collection) （不包括活动总结). If so, please use JSON format to tell me the 'event_name', 'event_time', 'location', 'organizational_unit'. 时间尽可能规范到特定的时刻，如果有多个时间请一并输出，如没有则以null存在，推送发布时间为2023年，如果有多个活动，请返回list，如果没有则返回空list。Otherwise, tell me the activity category it belongs to. please use JSON format!去除内容中的所有引号的存在"},
+                {"role": "system", "content": "Now that you are engaged in professional text processing, please let me know if the push below is a preview of an event (such as a lecture or ticket collection) （不包括活动总结). If so, please use JSON format to tell me the 'event_name', 'event_time', 'location', 'organizational_unit'. 时间尽可能规范到特定的时刻，如果有多个时间请一并输出，如没有则以null存在，推送发布时间为2024年，如果有多个活动，请返回list，如果没有则返回空list。Otherwise, tell me the activity category it belongs to. please use JSON format!去除内容中的所有引号的存在"},
                 {"role": "user", "content": text + "please use JSON format!! 如果出现了内容中的引号,请不要存在,以防止json格式无法读取"},
             ]
             infolist = self.ask_chatgpt(my_messages)
@@ -74,7 +74,7 @@ class GPTProcessor:
             ]
             summary1 = self.ask_chatgpt(my_messages)
             my_messages = [
-                {"role": "system", "content": "Now that you are engaged in professional text processing, please let me know if the push below is a preview of an event (such as a lecture or ticket collection) (不包括活动总结). If so, please use JSON format to tell me the 'event_name', 'event_time', 'location', 'organizational_unit'. 时间尽可能规范到特定的时刻，如果有多个时间请一并输出，如没有则以null存在，推送发布时间为2023年。Otherwise, tell me the activity category it belongs to."},
+                {"role": "system", "content": "Now that you are engaged in professional text processing, please let me know if the push below is a preview of an event (such as a lecture or ticket collection) (不包括活动总结). If so, please use JSON format to tell me the 'event_name', 'event_time', 'location', 'organizational_unit'. 时间尽可能规范到特定的时刻，如果有多个时间请一并输出，如没有则以null存在，推送发布时间为2024年。Otherwise, tell me the activity category it belongs to."},
                 {"role": "user", "content": summary + '\n' + text[:-1500]},
             ]
             infolist = self.ask_chatgpt(my_messages)
@@ -190,5 +190,7 @@ if __name__ == '__main__':
     test_text = '''
     你是煞笔
 '''
+    with open("activity_example.txt","r") as f:
+        test_text = f.read()
     processor = GPTProcessor()
     print ( processor.Text_to_JSON(test_text) )
