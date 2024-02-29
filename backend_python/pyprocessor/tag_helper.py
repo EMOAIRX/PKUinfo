@@ -71,11 +71,23 @@ def only_test_embedding(file):
     v_list.sort(reverse=True)
     v_all = np.sum([v[0] for v in v_list])
     v_list = [(v[0]/v_all,v[1]) for v in v_list]
+    tag1 = 0
+    tag2 = 0
+    for i in range(len(v_list)):
+        x = v_list[i]
+        if x[1].startswith("招聘"):
+            tag1 = i
+        elif x[1].startswith("招新"):
+            tag2 = i
+    if v_list[tag1][0] > v_list[tag2][0]:
+        v_list[tag2] = (0,"")
+    else:
+        v_list[tag1] = (0,"")
     print(v_list)
-    threshold = 1.2 / len(tags)
+    threshold = 1 / len(tags)
     v_list = [v for v in v_list if v[0] > threshold]
     print(v_list)
-    print(v_list[:3])
+    print([v[1][:2] for v in v_list[:3]])
 
 def get_tags_from_content(content):
     content_embedding = get_embedding(content)
@@ -92,9 +104,21 @@ def get_tags_from_content(content):
     v_list.sort(reverse=True)
     v_all = np.sum([v[0] for v in v_list])
     v_list = [(v[0]/v_all,v[1]) for v in v_list]
-    threshold = 1.2 / len(tags)
+    tag1 = 0
+    tag2 = 0
+    for i in range(len(v_list)):
+        x = v_list[i]
+        if x[1].startswith("招聘"):
+            tag1 = i
+        elif x[1].startswith("招新"):
+            tag2 = i
+    if v_list[tag1][0] > v_list[tag2][0]:
+        v_list[tag2] = (0,"")
+    else:
+        v_list[tag1] = (0,"")
+    threshold = 1 / len(tags)
     v_list = [v for v in v_list if v[0] > threshold]
-    return v_list[:3]
+    return [v[1][:2] for v in v_list[:3]]
 
 
 if __name__ == "__main__":
