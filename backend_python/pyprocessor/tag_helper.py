@@ -7,9 +7,7 @@ def read_tags(file):
         lines = f.readlines()
         tags = [line.strip() for line in lines]
         return tags
-def ask_chatgpt(message): 
-       # print(message)
-     #   print({"role": "user", "content": message})
+def ask_chatgpt(message):  
         
         client = ZhipuAI(api_key=zhipuai_APIKEY) # 请填写您自己的APIKey
         response = client.chat.completions.create(
