@@ -4,6 +4,24 @@ from WebContent import WebContent
 from EasyOCR import EasyOCR
 import requests
 import json
+import mysql.connector
+def check_and_add_string(connection, cursor, table_name, string_to_check):
+    # 查询是否已存在该字符串
+    query = "SELECT COUNT(*) FROM {} WHERE record_string = %s".format(table_name)
+    cursor.execute(query, (string_to_check,))
+    result = cursor.fetchone()[0]
+    
+    if result > 0:
+        print("字符串已存在")
+        return True
+    else:
+        # 如果不存在，则添加新字符串
+        insert_query = "INSERT INTO {} (record_string) VALUES (%s)".format(table_name)
+        cursor.execute(insert_query, (string_to_check,))
+        connection.commit()
+        print("字符串已添加")
+        return False
+
 
 # 这个函数改async有点难啊
 def check_is_repeated(content : WebContent) -> bool:
@@ -28,6 +46,27 @@ class URL2JSON:
         self.content_getter = ContentGetter()
         self.processor = GPTProcessor()
         self.ocr_reader = ocr_reader
+        self.config = {
+            'user': 'root',
+            'password': 'pkuinfo',
+            'host': '127.0.0.1',
+            'database': 'pkuinfo',
+            'raise_on_warnings': True
+        }
+    def check_repeated(self, string_to_check): 
+        try:
+            connection = mysql.connector.connect(**self.config)
+            cursor = connection.cursor()
+            table_name = "new_records" 
+            res = check_and_add_string(connection, cursor, table_name, string_to_check)
+        except mysql.connector.Error as err:
+            print("MySQL 错误：", err)
+            res = True
+        finally:
+            if 'connection' in locals() and connection.is_connected():
+                cursor.close()
+                connection.close()
+        return res
 
     def get_jsonlist(self, url, check_repeated = True):
         import json
@@ -38,15 +77,13 @@ class URL2JSON:
             raise e
         assert isinstance(content, WebContent)
         #进行查重，重复则报错
+        '''
         if check_repeated:
             if check_is_repeated(content):
                 raise Exception("Repeated Content")
-        #if time < 2023.08.01 raise TOO EARLY
-        # POSTER TIME BE LIKE "2023-05-25 23:39" as a str
+        '''
         post_time = content.publish_time
         print(post_time)
-        if (post_time[3] == '2') or (post_time[5]=='0' and post_time[6] < '8'):
-           raise Exception("TOO EARLY") 
 
         #通过gpt将网页内容转为标准化json
         if not self.processor.first_guess(content.title, content.text):
@@ -73,6 +110,11 @@ class URL2JSON:
         print("JSON数据:")
         print(jsondata_list)
         result_list = []
+        if check_repeated:
+            if self.check_repeated(content.title + content.author):
+                print("字符串已存在")
+                raise Exception("Repeated Content")
+         
         for jsondata in jsondata_list:
             jsondata['title'] = content.title
             jsondata['author'] = content.author
@@ -82,6 +124,7 @@ class URL2JSON:
             result_list.append(jsondata)
         print("JSON数据:")
         print(result_list)
+        '''
         if check_repeated:
             if check_is_repeated(content):
                 raise Exception("Repeated Content")
@@ -94,6 +137,7 @@ class URL2JSON:
             data["publish_time"] = content.publish_time #到底是publish_time还是update_time，好像一开始改的就是错的？这个是create_time
             r = requests.post(url, json.dumps(data), headers=headers) #啊啊
             print("记录请求发送")
+        '''
         return result_list
 
     def convert_to_ActivityInfo(self, json_data):
@@ -113,6 +157,7 @@ class URL2JSON:
         activityInfo["college"] = json_data["organizational_unit"][:40] if json_data["organizational_unit"] is not None else None
         activityInfo["accountLink"] = json_data["url"][:255] if json_data["url"] is not None else None
         activityInfo["extraInfo"] = json_data["event_time"]
+        activityInfo["tags"] = json_data["tag"] if json_data["tag"] is not None else None
         return activityInfo
 
 
@@ -127,6 +172,6 @@ if __name__ == '__main__':
     # url = 'https://mp.weixin.qq.com/s/dVwVezWK5eNTqUW_3sevng'
     url = 'https://mp.weixin.qq.com/s/nmjXh8MM-qi76UiWujD0zw'
     url2json = URL2JSON(EasyOCR())
-    print(url2json.get_jsonlist(url, check_repeated = False))
+    print(url2json.get_jsonlist(url, check_repeated = True))
     # strr = '{   "event_name": "2023 国际华语控烟辩论赛邀请赛半决赛",   "event_time": [     "2023-08-11 23:59"   ],   "location": null,   "organizational_unit": "北大辩协",   "event_summary": "健言青春·2023 国际华语控烟辩论赛邀请赛半决赛邀您共同参与！"   }'
     # print(json.loads(strr))

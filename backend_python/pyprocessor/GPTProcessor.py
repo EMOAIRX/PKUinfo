@@ -6,7 +6,7 @@ import zhipuai
 from datetime import datetime
 from zhipuai import ZhipuAI
 import re
-import tag_helper
+import tag_helper 
 class GPTProcessor:
     def __init__(self):
         openai.api_key = openai_APIKEY
@@ -163,6 +163,7 @@ class GPTProcessor:
                 'location': info.get('location', None),
                 'organizational_unit': info.get('organizational_unit', None),
                 'event_summary': info.get('event_summary', None),
+                'tags' : tag_helper.get_tags_from_content(info.get('event_name', None) + ' ' + info.get('event_summary', None))
             }
             print(json_data)
             result_list.append(json_data)
