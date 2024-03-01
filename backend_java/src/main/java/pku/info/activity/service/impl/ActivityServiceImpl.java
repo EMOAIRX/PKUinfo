@@ -16,11 +16,13 @@ import pku.info.activity.entity.Subscription;
 import pku.info.activity.mapper.ActivityMapper;
 import pku.info.activity.mapper.SubscribeMapper;
 import pku.info.activity.service.ActivityService;
+import pku.info.activity.vo.ActivityWithSubscribeInfo;
 import pku.info.common.Conf;
 import pku.info.common.ConstantMapper;
 import pku.info.common.Result;
 
 import java.sql.Date;
+import java.util.List;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -108,6 +110,39 @@ public class ActivityServiceImpl implements ActivityService {
             return Result.success();
         }
     }
+
+    @Override
+    public Result getRangeByIntWithSubscribeInfo(Date startDate, Integer delay, int start, int size, int tag, String type) {
+        Date endDate = setDate(startDate, delay);
+        return getRangeByDateWithSubscribeInfo(startDate, endDate, start, size, tag, type);
+    }
+
+    @Override
+    public Result getRangeByDateWithSubscribeInfo(Date startDate, Date endDate, int start, int size, int tag, String type) {
+        Integer userId = getUserId();
+        if(userId == -1){
+            return Result.error(403, "UNAUTHORIZED");
+        }else{
+            String tagName = ConstantMapper.translateTag(tag);
+            System.out.println("Fuck1");
+            int count = activityMapper.getSubscribeActivityCount(startDate, endDate, userId, tagName);
+            pku.info.activity.vo.Page page = new pku.info.activity.vo.Page();
+            page.setTotal(count);
+            page.setCurrent(start);
+            page.setSize(size);
+            page.setPages((int) Math.ceil((double) count / (double) size));
+            // 是否需要查数据
+            if((start - 1) * size >= count){
+                page.setRecords(new Object[]{});
+                return Result.success(page);
+            }
+            Integer startIndex = (start - 1) * size;
+            List<ActivityWithSubscribeInfo> activityList = activityMapper.getSubscribedActivityInfo(startDate, endDate, userId, startIndex, size, tagName, type);
+            page.setRecords(activityList.toArray());
+            return Result.success(page);
+        }
+    }
+
     private boolean isSubscribed(Integer activityId, Integer userId){
         QueryWrapper<Subscription> subscriptionQueryWrapper = new QueryWrapper<>();
         subscriptionQueryWrapper.eq("activity_id",activityId);

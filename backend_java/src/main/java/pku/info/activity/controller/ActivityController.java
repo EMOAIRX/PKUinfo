@@ -16,7 +16,7 @@ public class ActivityController {
     @Resource
     private ActivityService activityService;
 
-    @GetMapping("/activity/{period}/{type}/{startDate}/{tag}/{start}/{size}")
+    @GetMapping("/activity/{period}/{type}/{startDate}/{start}/{size}/{tag}")
     public Result getActivityList(@PathVariable Date startDate,
                                   @PathVariable int start,
                                   @PathVariable int size,
@@ -33,7 +33,7 @@ public class ActivityController {
         return Result.error(400, "BAD_REQUEST");
     }
 
-    @GetMapping("/activity/{period}/{type}/{startDate}/{tag}/{start}/")
+    @GetMapping("/activity/{period}/{type}/{startDate}/{start}/{tag}")
     public Result getActivityList(@PathVariable Date startDate,
                                   @PathVariable int start,
                                   @PathVariable int tag,
@@ -83,7 +83,7 @@ public class ActivityController {
     //    return activityService.getDaysBySubscribe(startDate, start, Conf.PageSize, tag);
     //}
 
-    @GetMapping("/activity/{startDate}/{endDate}/{tag}/{start}/{size}")
+    @GetMapping("/activity/{startDate}/{endDate}/{start}/{size}/{tag}")
     public Result getRangeActivityWithSize(@PathVariable Date startDate,
                                            @PathVariable Date endDate,
                                            @PathVariable int start,
@@ -92,7 +92,7 @@ public class ActivityController {
         return activityService.getRangeByDate(startDate, endDate, start, size, tag, null);
     }
 
-    @GetMapping("/activity/{startDate}/{endDate}/{tag}/{start}")
+    @GetMapping("/activity/{startDate}/{endDate}/{start}/{tag}")
     public Result getRangeActivity(@PathVariable Date startDate,
                                    @PathVariable Date endDate,
                                    @PathVariable int start,
@@ -101,7 +101,7 @@ public class ActivityController {
     }
 
     // 登录用户获取活动信息
-    @GetMapping("/auth/activity/{period}/{type}/{startDate}/{tag}/{start}/{size}")
+    @GetMapping("/auth/activity/{period}/{type}/{startDate}/{start}/{size}/{tag}")
     public Result getActivityListWithSubscribeInfoWithSize(@PathVariable String period,
                                                            @PathVariable String type,
                                                            @PathVariable Date startDate,
@@ -124,6 +124,23 @@ public class ActivityController {
                                                    @PathVariable int tag,
                                                    @PathVariable int start){
         return getActivityListWithSubscribeInfoWithSize(period, type, startDate, tag, start, Conf.PageSize);
+    }
+
+    @GetMapping("/auth/activity/{startDate}/{endDate}/{start}/{size/{tag}")
+    public Result getRangeActivityWithSubscribeInfoWithSize(@PathVariable Date startDate,
+                                           @PathVariable Date endDate,
+                                           @PathVariable int start,
+                                           @PathVariable int size,
+                                           @PathVariable int tag) {
+        return activityService.getRangeByDateWithSubscribeInfo(startDate, endDate, start, size, tag, null);
+    }
+
+    @GetMapping("/auth/activity/{startDate}/{endDate}/{start}/{tag}")
+    public Result getRangeActivityWithSubscribeInfo(@PathVariable Date startDate,
+                                   @PathVariable Date endDate,
+                                   @PathVariable int start,
+                                   @PathVariable int tag) {
+        return getRangeActivityWithSubscribeInfoWithSize(startDate, endDate, start, Conf.PageSize, tag);
     }
 
     // 新增活动
