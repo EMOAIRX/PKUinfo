@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -57,5 +56,5 @@ public class Activity {
     private Integer subscribe;
 
     @TableField(value = "type")
-    private String type;
+    private String tags;
 }

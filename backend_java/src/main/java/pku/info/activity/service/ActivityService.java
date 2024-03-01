@@ -6,15 +6,17 @@ import pku.info.common.Result;
 import java.sql.Date;
 
 public interface ActivityService {
-    Result getWeekByView(Date date, int start, int size);
+    //Result getWeekByView(Date date, int start, int size, int tag);
+    //
+    //Result getWeekBySubscribe(Date date, int start, int size, int tag);
+    //
+    //Result getDaysByView(Date date, int start, int size, int tag);
+    //
+    //Result getDaysBySubscribe(Date date, int start, int size, int tag);
 
-    Result getWeekBySubscribe(Date date, int start, int size);
+    Result getRangeByDate(Date startDate, Date endDate, int start, int size, int tag, String type);
 
-    Result getDaysByView(Date date, int start, int size);
-
-    Result getDaysBySubscribe(Date date, int start, int size);
-
-    Result getRange(Date startDate, Date endDate, int start, int size);
+    Result getRangeByInt(Date startDate, int delay, int start, int size, int tag, String type);
 
     Result insertActivity(Activity activity);
 
@@ -23,4 +25,8 @@ public interface ActivityService {
     Result subscribe(Integer id);
 
     Result unsubscribe(Integer id);
+
+    Result getRangeByIntWithSubscribeInfo(Date startDate, Integer delay, int start, int size, int tag, String type);
+
+    Result getRangeByDateWithSubscribeInfo(Date startDate, Date endDate, int start, int size, int tag, String type);
 }

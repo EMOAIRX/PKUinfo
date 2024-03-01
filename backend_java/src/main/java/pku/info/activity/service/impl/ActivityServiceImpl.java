@@ -17,11 +17,10 @@ import pku.info.activity.mapper.ActivityMapper;
 import pku.info.activity.mapper.SubscribeMapper;
 import pku.info.activity.service.ActivityService;
 import pku.info.common.Conf;
+import pku.info.common.ConstantMapper;
 import pku.info.common.Result;
 
 import java.sql.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -29,39 +28,37 @@ public class ActivityServiceImpl implements ActivityService {
     private ActivityMapper activityMapper;
     @Resource
     private SubscribeMapper subscribeMapper;
-    private final long DAY = 1000 * 3600 * 24;
+    //@Override
+    //@Cacheable(value = "activity", key = "{#root.methodName+'_'+#startDate+'_p'+#start+'_s'+#size+'_t'+#tag}")
+    //public Result getWeekByView(Date startDate, int start, int size, int tag) {
+    //    return selectRange(startDate, setDate(startDate, 6), start, size, "view", false, tag);
+    //}
+    //@Override
+    //@Cacheable(value = "activity", key = "{#root.methodName+'_'+#startDate+'_p'+#start+'_s'+#size+'_t'+#tag}")
+    //public Result getWeekBySubscribe(Date startDate, int start, int size, int tag) {
+    //    // 截止时间
+    //    Date endDate = new Date(startDate.getTime() + DAY * 6);
+    //    return selectRange(startDate, setDate(startDate, 6), start, size, "subscribe", false, tag);
+    //}
+    //@Override
+    //@Cacheable(value = "activity", key = "{#root.methodName+'_'+#startDate+'_p'+#start+'_s'+#size+'_t'+#tag}")
+    //public Result getDaysByView(Date startDate, int start, int size, int tag) {
+    //    return selectRange(startDate, setDate(startDate, 2), start, size, "view", false, tag);
+    //}
+    //@Override
+    //@Cacheable(value = "activity", key = "{#root.methodName+'_'+#startDate+'_p'+#start+'_s'+#size+'_t'+#tag}")
+    //public Result getDaysBySubscribe(Date startDate, int start, int size, int tag) {
+    //    return selectRange(startDate, setDate(startDate, 2), start, size, "subscribe", false, tag);
+    //}
     @Override
-    @Cacheable(value = "activity", key = "{#root.methodName+'-'+#startDate+'-p'+#start+'-s'+#size}")
-    public Result getWeekByView(Date startDate, int start, int size) {
-        // 截止时间
-        Date endDate = new Date(startDate.getTime() + DAY * 6);
-        return selectRange(startDate, endDate, start, size, "view", false);
+    @Cacheable(value = "activity", key = "{#root.methodName+'_'+#startDate+'_'+#endDate+'_p'+#start+'_s'+#size+'_t'+#tag+#type}")
+    public Result getRangeByDate(Date startDate, Date endDate, int start, int size, int tag, String type) {
+        return selectRange(startDate, endDate, start, size, type, true, tag);
     }
     @Override
-    @Cacheable(value = "activity", key = "{#root.methodName+'-'+#startDate+'-p'+#start+'-s'+#size}")
-    public Result getWeekBySubscribe(Date startDate, int start, int size) {
-        // 截止时间
-        Date endDate = new Date(startDate.getTime() + DAY * 6);
-        return selectRange(startDate, endDate, start, size, "subscribe", false);
-    }
-    @Override
-    @Cacheable(value = "activity", key = "{#root.methodName+'-'+#startDate+'-p'+#start+'-s'+#size}")
-    public Result getDaysByView(Date startDate, int start, int size) {
-        // 截止时间
-        Date endDate = new Date(startDate.getTime() + DAY * 2);
-        return selectRange(startDate, endDate, start, size, "view", false);
-    }
-    @Override
-    @Cacheable(value = "activity", key = "{#root.methodName+'-'+#startDate+'-p'+#start+'-s'+#size}")
-    public Result getDaysBySubscribe(Date startDate, int start, int size) {
-        // 截止时间
-        Date endDate = new Date(startDate.getTime() + DAY * 2);
-        return selectRange(startDate, endDate, start, size, "subscribe", false);
-    }
-    @Override
-    @Cacheable(value = "activity", key = "{#root.methodName+'-'+#startDate+'-'+#endDate+'-p'+#start+'-s'+#size}")
-    public Result getRange(Date startDate, Date endDate, int start, int size) {
-        return selectRange(startDate, endDate, start, size);
+    @Cacheable(value = "activity", key = "{#root.methodName+'_'+#startDate+'_'+#delay+'_p'+#start+'_s'+#size+'_t'+#tag+#type}")
+    public Result getRangeByInt(Date startDate, int delay, int start, int size, int tag, String type) {
+        return selectRange(startDate, setDate(startDate, delay), start, size, type, true, tag);
     }
     @Override
     @CacheEvict(value = "activity", allEntries = true)
@@ -76,12 +73,6 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Result getSubscribedActivity() {
         return Result.success(activityMapper.getSubscribedActivity(getUserId(),new Date(new java.util.Date().getTime())));
-    }
-    private Result selectRange(Date startDate, Date endDate, int start, int size){
-        IPage<Activity> page = new Page<>(start, size);
-        QueryWrapper<Activity> activityQueryWrapper = new QueryWrapper<>();
-        activityQueryWrapper.between("start_date",startDate, endDate);
-        return Result.success(activityMapper.selectPage(page, activityQueryWrapper));
     }
     @Override
     public Result subscribe(Integer activityId) {
@@ -124,11 +115,16 @@ public class ActivityServiceImpl implements ActivityService {
         Subscription subscription = subscribeMapper.selectOne(subscriptionQueryWrapper);
         return subscription != null;
     }
-    private Result selectRange(Date startDate, Date endDate, int start, int size, String col, boolean asc){
+    private Result selectRange(Date startDate, Date endDate, int start, int size, String col, boolean asc, int tag){
         IPage<Activity> page = new Page<>(start, size);
         QueryWrapper<Activity> activityQueryWrapper = new QueryWrapper<>();
         activityQueryWrapper.between("start_date",startDate, endDate);
-        activityQueryWrapper.orderBy(true, asc, col);
+        // 获取对应标签
+        String tagName = ConstantMapper.translateTag(tag);
+        if(tagName != null){
+            activityQueryWrapper.like("type", tagName);
+        }
+        activityQueryWrapper.orderBy((col != null), !asc, col);
         return Result.success(activityMapper.selectPage(page, activityQueryWrapper));
     }
     private Integer getUserId(){
@@ -141,5 +137,9 @@ public class ActivityServiceImpl implements ActivityService {
         }else{
             return -1;
         }
+    }
+    private Date setDate(Date startDate, Integer delay){
+        long DAY = 1000 * 3600 * 24;
+        return new Date(startDate.getTime() + DAY * delay);
     }
 }
