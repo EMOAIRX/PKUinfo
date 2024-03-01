@@ -86,6 +86,8 @@ def only_test_embedding(file):
     v_list = [v for v in v_list if v[0] > threshold]
     print(v_list)
     print([v[1][:2] for v in v_list[:3]])
+    v_lis = [v[1][:2] for v in v_list[:3]]
+    return '+'.join(v_lis)
 
 def get_tags_from_content(content):
     content_embedding = get_embedding(content)
@@ -116,9 +118,11 @@ def get_tags_from_content(content):
         v_list[tag1] = (0,"")
     threshold = 1 / len(tags)
     v_list = [v for v in v_list if v[0] > threshold]
-    return [v[1][:2] for v in v_list[:3]]
+    v_lis = [v[1][:2] for v in v_list[:3]]
+    return '+'.join(v_lis)
 
 
 if __name__ == "__main__":
     #only_test_gpt("activity_example.txt")
-    only_test_embedding("activity_example.txt")
+    res = only_test_embedding("activity_example.txt")
+    print(res)
