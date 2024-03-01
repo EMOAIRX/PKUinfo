@@ -3,33 +3,29 @@ import requests
 import time
 from tokens import NOWTOKEN,headers
 def page(name,fad,num=1):                             #要请求的文章页数
-    url = 'https://mp.weixin.qq.com/cgi-bin/appmsg'
+    #https://mp.weixin.qq.com/cgi-bin/appmsgpublish?sub=list&search_field=null&begin=0&count=5&query=&fakeid=MzU5ODg0MTAwMw%3D%3D&type=101_1&free_publish_type=1&sub_action=list_ex&token=1551583939&lang=zh_CN&f=json&ajax=1
+    url = 'https://mp.weixin.qq.com/cgi-bin/appmsgpublish?sub=list&search_field=null&begin=0&count=5&query=&fakeid='+fad+'%3D%3D&type=101_1&free_publish_type=1&sub_action=list_ex&token='+str(NOWTOKEN)+'&lang=zh_CN&f=json&ajax=1'
     title = []
     link = []
     res = []
-    for i in range(num):         
-        data = {
-            'action': 'list_ex',
-            'begin': i*5,       #页数
-            'count': '5',
-            'fakeid': fad,
-            'type': '9',
-            'query':'' ,
-            'token': NOWTOKEN,
-            'lang': 'zh_CN',
-            'f': 'json',
-            'ajax': '1',
-        }
-        r = requests.get(url,headers = headers,params=data)
-        print(r)
+    for i in range(num):
+        r = requests.get(url,headers = headers)
         # get json
         dic = r.json() 
-        print('dic:',dic)
+        import json
         try:
-            for i in dic['app_msg_list']:     #遍历dic['app_msg_list']中所有内容
-                res. append((i['title'],i['link']))
-        except:
+            A = eval(dic['publish_page'])['publish_list']
+            for item in A:
+                publish_info = json.loads(item['publish_info'])
+                appmsg_info = publish_info['appmsgex'][0]
+                T = appmsg_info['title']
+                L = appmsg_info['link']
+                L = L.replace('\\', '')  # Remove all backslashes from L string
+                res.append((T,L))
+        except Exception as e:
             print('error')
+            print(e)
+    print(name,res)
     return (name,res)
 
 if __name__ == '__main__':
@@ -37,8 +33,8 @@ if __name__ == '__main__':
     def POSTER(link):
         import json
         headers = {'Content-Type': 'application/json'}
-        url = 'http://localhost:9001/'
-        data = {'url': link}
+        url = 'http://localhost:9002/'
+        data = {'URL': link}
         r = requests.post(url, data=json.dumps(data), headers=headers)
         print(r)
         print(r.text)
@@ -65,9 +61,8 @@ if __name__ == '__main__':
         for name,fad in zip(name_list,fakeid_list):
             print(name,fad)
 
-            SLEEPTIME = random.randint(600,1000)
-            print('sleep',SLEEPTIME)
             outdata = page(name,fad,1)
+            print(outdata)
             #output all the urls
             for i in outdata[1]:
                 print(i[0],i[1])
@@ -80,3 +75,7 @@ if __name__ == '__main__':
                 
                 print('sleep',SLEEPTIME)
                 time.sleep(SLEEPTIME)
+
+            SLEEPTIME = random.randint(600,1000)
+            print('sleep',SLEEPTIME)
+            time.sleep(SLEEPTIME)

@@ -157,14 +157,14 @@ const changeDate = (date) => {
   </div>
 
         
-  <div class="grid grid-cols-7 mt-1 place-items-center">
-    <div v-for="(day, idx) in allDaysInMonth()" :key="idx" :class="colStartClasses[moment(day).day().toString()] + ' border border-solid border-base-content/50 w-full h-11 lg:min-h-28'">
+  <div class="grid grid-col auto-rows-auto mt-1 place-items-center items-stretch">
+    <div v-for="(day, idx) in allDaysInMonth()" :key="idx" :class="colStartClasses[moment(day).day().toString()] + ' border border-solid border-base-content/50 w-full h-11 lg:h-auto'">
       <p class="flex items-center justify-center h-8 w-8 rounded-full mx-1 mt-1 text-sm cursor-pointer hover:bg-base-300"
         :class="{'bg-primary dark:hover:bg-base-300 text-primary-content': isToday(day), 'text-base-content/50': isDifferentMonth(day),'bg-accent text-accent-content hover:bg-accent/30': moment(day).isSame(selectedDate, 'day')}"
         @click="selectedDate = day">
         {{ moment(day).format('D') }}
       </p>
-      <div class="w-full lg:block hidden">
+      <div class="w-full h-full lg:block hidden">
         <CalendarBadge :date="moment(day).format('YYYY-MM-DD')" @change-date="changeDate(day)" />
       </div>
     </div>

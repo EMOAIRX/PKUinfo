@@ -16,14 +16,13 @@ async function viewMore() {
 </script>
 
 <template>
-<div class="card w-full border-neutral border-2 relative bg-gradient-to-br from-base-200 to-accent/10 shadow-lg">
-  <div class="absolute glass opacity-30 w-full h-full z-0 rounded-2xl"></div>
+<div class="card w-full border-neutral border-2 relative bg-base-200 shadow-lg">
   <div class="card-body py-6 px-6 items-center text-center z-10">
     <div class="w-full flex justify-between items-center">
       <h2 class="card-title">{{ activity.title }}</h2>
       <span class="badge badge-accent">{{ activity.type }}</span>
     </div>
-    <div class="w-full grid grid-cols-3">
+    <div class="w-full flex flex-col items-start">
       <p class="justify-self-start">简介：</p>
       <p class=" col-span-2 justify-self-start">{{ activity.description }}</p>
     </div>

@@ -129,6 +129,8 @@ public class ActivityController {
     // 新增活动
     @PutMapping ("/activity")
     public Result insertActivity(@RequestBody Activity activity){
+        // 输出activity
+        System.out.println(activity);
         return activityService.insertActivity(activity);
     }
 

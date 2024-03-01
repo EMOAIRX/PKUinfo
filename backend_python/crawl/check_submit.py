@@ -7,7 +7,7 @@ if __name__ == '__main__':
     def POSTER(link):
         import json
         headers = {'Content-Type': 'application/json'}
-        url = 'http://localhost:9001/'
+        url = 'http://localhost:9002/'
         data = {'URL': link}
         r = requests.post(url, data=json.dumps(data), headers=headers)
         print(r)

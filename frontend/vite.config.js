@@ -29,7 +29,7 @@ export default defineConfig({
   server: {
     proxy:{
       '/api': {
-        target: 'http://111.229.135.84:8080',
+        target: 'https://pkuinfo.lcpu.dev',
         changeOrigin: true,
         secure: false,
         pathRewrite: {

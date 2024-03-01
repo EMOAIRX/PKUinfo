@@ -45,9 +45,9 @@ watch(() => props.date, () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center w-full">
+  <div class="flex flex-col items-center w-full mt-2">
     <div v-for="activity in records.slice(0, 3)" :key="activity.id" class="w-full bg-base-200 border-l-4 mx-1 px-1 py-1 border-secondary/80">
-      <h3>{{ activity.title }}</h3>
+      <h3 class="text-sm">{{ activity.title }}</h3>
     </div>
     <div v-if="records.length >3" class="w-full mx-1 px-1 py-1 ">
       <h3>...</h3>

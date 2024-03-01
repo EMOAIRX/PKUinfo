@@ -3746,7 +3746,7 @@ import requests
 def POSTER(link):
     import json
     headers = {'Content-Type': 'application/json'}
-    url = 'http://localhost:8080/api/user/submit/link'
+    url = 'http://localhost:8081/api/user/submit/link'
     data = {'link': link}
     r = requests.post(url, data=json.dumps(data), headers=headers)
     print(r)

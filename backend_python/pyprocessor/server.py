@@ -16,16 +16,19 @@ def handle_request():
     with semaphore:
         try:
             data = request.data.decode('utf-8')
+            print('data = ',data)
             URL = json.loads(data)['URL']
             with open('LOGS.txt', 'a') as f:
                 f.write(URL + '\n')
                 f.flush()
             url2json = URL2JSON(ocr_reader)
             result_jsonlist = url2json.get_jsonlist(URL)
+            print("result_jsonlist = ",result_jsonlist)
 
             for result in result_jsonlist:
                 data = url2json.convert_to_ActivityInfo(str(result))
-                url = 'http://localhost:8080/api/activity'
+                print('data = ',data)
+                url = 'http://localhost:8081/api/activity'
                 headers = {'Content-Type': 'application/json'}
                 with open('LOGS.txt', 'a') as f:
                     f.write(str(data) + '\n')
@@ -69,7 +72,7 @@ def handle_request_nocheck():
 
             for result in result_jsonlist:
                 data = url2json.convert_to_ActivityInfo(str(result))
-                url = 'http://localhost:8080/api/activity'
+                url = 'http://localhost:8081/api/activity'
                 headers = {'Content-Type': 'application/json'}
                 with open('LOGS.txt', 'a') as f:
                     f.write(str(data) + '\n')
@@ -99,4 +102,4 @@ def handle_request_nocheck():
         return jsonify({'info': info})
 
 if __name__ == "__main__":
-    app.run(host="localhost", port=9001)
+    app.run(host="localhost", port=9002)
