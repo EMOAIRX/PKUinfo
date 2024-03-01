@@ -5,7 +5,7 @@ from EasyOCR import EasyOCR
 import requests
 import json
 import mysql.connector
-def check_and_add_string(connection, cursor, table_name, string_to_check):
+def check_string(connection, cursor, table_name, string_to_check):
     # 查询是否已存在该字符串
     query = "SELECT COUNT(*) FROM {} WHERE record_string = %s".format(table_name)
     cursor.execute(query, (string_to_check,))
@@ -14,15 +14,15 @@ def check_and_add_string(connection, cursor, table_name, string_to_check):
     if result > 0:
         print("字符串已存在")
         return True
-    else:
-        # 如果不存在，则添加新字符串
-        insert_query = "INSERT INTO {} (record_string) VALUES (%s)".format(table_name)
-        cursor.execute(insert_query, (string_to_check,))
-        connection.commit()
-        print("字符串已添加")
+    else: 
+        print("字符串重复")
         return False
-
-
+def add_string(connection, cursor, table_name, string_to_check):
+    # 查询是否已存在该字符串
+    insert_query = "INSERT INTO {} (record_string) VALUES (%s)".format(table_name)
+    cursor.execute(insert_query, (string_to_check,))
+    connection.commit()
+    print("字符串已添加") 
 # 这个函数改async有点难啊
 def check_is_repeated(content : WebContent) -> bool:
     url = 'http://localhost:8081/api/admin/check'
@@ -58,7 +58,7 @@ class URL2JSON:
             connection = mysql.connector.connect(**self.config)
             cursor = connection.cursor()
             table_name = "t_records" 
-            res = check_and_add_string(connection, cursor, table_name, string_to_check)
+            res = check_string(connection, cursor, table_name, string_to_check)
         except mysql.connector.Error as err:
             print("MySQL 错误：", err)
             res = True
@@ -67,6 +67,18 @@ class URL2JSON:
                 cursor.close()
                 connection.close()
         return res
+    def add_repeated(self, string_to_check):
+        try:
+            connection = mysql.connector.connect(**self.config)
+            cursor = connection.cursor()
+            table_name = "t_records" 
+            add_string(connection, cursor, table_name, string_to_check)
+        except mysql.connector.Error as err:
+            print("MySQL 错误：", err)
+        finally:
+            if 'connection' in locals() and connection.is_connected():
+                cursor.close()
+                connection.close()
 
     def get_jsonlist(self, url, check_repeated = True):
         import json
@@ -82,8 +94,10 @@ class URL2JSON:
             if check_is_repeated(content):
                 raise Exception("Repeated Content")
         '''
+        check_repeat_string = content.title + content.author
+
         if check_repeated:
-            if self.check_repeated(content.title + content.author):
+            if self.check_repeated(check_repeat_string):
                 print("字符串已存在")
                 raise Exception("Repeated Content")
         post_time = content.publish_time
@@ -138,6 +152,8 @@ class URL2JSON:
             r = requests.post(url, json.dumps(data), headers=headers) #啊啊
             print("记录请求发送")
         '''
+        if check_repeated and len(result_list) > 0:
+            self.add_repeated(check_repeat_string)
         return result_list
 
     def convert_to_ActivityInfo(self, json_data):
