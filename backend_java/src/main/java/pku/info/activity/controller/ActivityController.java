@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import pku.info.activity.entity.Activity;
 import pku.info.activity.service.ActivityService;
 import pku.info.common.Conf;
-import pku.info.common.ConstantMapper;
 import pku.info.common.Result;
 
 import java.sql.Date;
@@ -16,72 +15,69 @@ public class ActivityController {
     @Resource
     private ActivityService activityService;
 
-    @GetMapping("/activity/{period}/{type}/{startDate}/{start}/{size}/{tag}")
-    public Result getActivityListWithSize(@PathVariable Date startDate,
+    @GetMapping("/activity/week/view/{startDate}/{start}/{size}/{tag}")
+    public Result getWeekActivityListWithSizeByView(@PathVariable Date startDate,
+                                          @PathVariable int start,
+                                          @PathVariable int size,
+                                          @PathVariable int tag){
+        return activityService.getRangeByInt(startDate, 6, start, size, tag, "view");
+    }
+
+    @GetMapping("/activity/week/view/{startDate}/{start}/{tag}")
+    public Result getWeekActivityListByView(
+                                  @PathVariable Date startDate,
+                                  @PathVariable int start,
+                                  @PathVariable int tag){
+        return getWeekActivityListWithSizeByView(startDate, start, Conf.PageSize, tag);
+    }
+
+    @GetMapping("/activity/week/subscribe/{startDate}/{start}/{size}/{tag}")
+    public Result getWeekActivityListWithSizeBySubscribe(@PathVariable Date startDate,
+                                          @PathVariable int start,
+                                          @PathVariable int size,
+                                          @PathVariable int tag){
+        return activityService.getRangeByInt(startDate, 6, start, size, tag, "subscribe");
+    }
+
+    @GetMapping("/activity/week/subscribe/{startDate}/{start}/{tag}")
+    public Result getWeekActivityListBySubscribe(
+            @PathVariable Date startDate,
+            @PathVariable int start,
+            @PathVariable int tag){
+        return getWeekActivityListWithSizeBySubscribe(startDate, start, Conf.PageSize, tag);
+    }
+
+    @GetMapping("/activity/days/view/{startDate}/{start}/{size}/{tag}")
+    public Result getDaysActivityListWithSizeByView(@PathVariable Date startDate,
+                                          @PathVariable int start,
+                                          @PathVariable int size,
+                                          @PathVariable int tag){
+        return activityService.getRangeByInt(startDate, 2, start, size, tag, "view");
+    }
+
+    @GetMapping("/activity/days/view/{startDate}/{start}/{tag}")
+    public Result getDaysActivityListByView(
+            @PathVariable Date startDate,
+            @PathVariable int start,
+            @PathVariable int tag){
+        return getDaysActivityListWithSizeByView(startDate, start, Conf.PageSize, tag);
+    }
+
+    @GetMapping("/activity/days/subscribe/{startDate}/{start}/{size}/{tag}")
+    public Result getDaysActivityListWithSizeBySubscribe(@PathVariable Date startDate,
                                   @PathVariable int start,
                                   @PathVariable int size,
-                                  @PathVariable int tag,
-                                  @PathVariable String period,
-                                  @PathVariable String type){
-        // 查看是week还是days
-        Integer delay = ConstantMapper.translatePeriod(period);
-        if(delay != null){
-            if("view".equals(type) || "subscribe".equals(type)){
-                return activityService.getRangeByInt(startDate, delay, start, size, tag, type);
-            }
-        }
-        return Result.error(400, "BAD_REQUEST");
+                                  @PathVariable int tag){
+        return activityService.getRangeByInt(startDate, 2, start, size, tag, "subscribe");
     }
 
-    @GetMapping("/activity/{period}/{type}/{startDate}/{start}/{tag}")
-    public Result getActivityList(@PathVariable Date startDate,
-                                  @PathVariable int start,
-                                  @PathVariable int tag,
-                                  @PathVariable String period,
-                                  @PathVariable String type){
-        return getActivityListWithSize(startDate, start, Conf.PageSize, tag, period, type);
+    @GetMapping("/activity/days/subscribe/{startDate}/{start}/{tag}")
+    public Result getDaysActivityListBySubscribe(
+            @PathVariable Date startDate,
+            @PathVariable int start,
+            @PathVariable int tag){
+        return getDaysActivityListWithSizeBySubscribe(startDate, start, Conf.PageSize, tag);
     }
-
-    // 获取活动
-    //@GetMapping("/activity/week/view/{startDate}/{tag}/{start}/{size}")
-    //public Result getWeekActivityByViewWithSize(@PathVariable Date startDate, @PathVariable int start, @PathVariable int size, @PathVariable int tag) {
-    //    return activityService.getWeekByView(startDate, start, size, tag);
-    //}
-    //
-    //@GetMapping("/activity/week/view/{startDate}/{tag}/{start}")
-    //public Result getWeekActivityByView(@PathVariable Date startDate, @PathVariable int start, @PathVariable int tag) {
-    //    return activityService.getWeekByView(startDate, start, Conf.PageSize, tag);
-    //}
-    //
-    //@GetMapping("/activity/week/subscribe/{startDate}/{tag}/{start}/{size}")
-    //public Result getWeekActivityBySubscribeWithSize(@PathVariable Date startDate, @PathVariable int start, @PathVariable int size, @PathVariable int tag) {
-    //    return activityService.getWeekBySubscribe(startDate, start, size, tag);
-    //}
-    //
-    //@GetMapping("/activity/week/subscribe/{startDate}/{tag}/{start}")
-    //public Result getWeekActivityBySubscribe(@PathVariable Date startDate, @PathVariable int start, @PathVariable int tag) {
-    //    return activityService.getWeekBySubscribe(startDate, start, Conf.PageSize, tag);
-    //}
-    //
-    //@GetMapping("/activity/days/view/{startDate}/{tag}/{start}/{size}")
-    //public Result getDaysActivityByViewWithSize(@PathVariable Date startDate, @PathVariable int start, @PathVariable int size, @PathVariable int tag) {
-    //    return activityService.getDaysByView(startDate, start, size, tag);
-    //}
-    //
-    //@GetMapping("/activity/days/view/{startDate}/{tag}/{start}")
-    //public Result getDaysActivityByView(@PathVariable Date startDate, @PathVariable int start, @PathVariable int tag) {
-    //    return activityService.getDaysByView(startDate, start, Conf.PageSize, tag);
-    //}
-    //
-    //@GetMapping("/activity/days/subscribe/{startDate}/{tag}/{start}/{size}")
-    //public Result getDaysActivityBySubscribeWithSize(@PathVariable Date startDate, @PathVariable int start, @PathVariable int size, @PathVariable int tag) {
-    //    return activityService.getDaysBySubscribe(startDate, start, size, tag);
-    //}
-    //
-    //@GetMapping("/activity/days/subscribe/{startDate}/{tag}/{start}")
-    //public Result getDaysActivityBySubscribe(@PathVariable Date startDate, @PathVariable int start, @PathVariable int tag) {
-    //    return activityService.getDaysBySubscribe(startDate, start, Conf.PageSize, tag);
-    //}
 
     @GetMapping("/activity/{startDate}/{endDate}/{start}/{size}/{tag}")
     public Result getRangeActivityWithSize(@PathVariable Date startDate,
@@ -101,29 +97,65 @@ public class ActivityController {
     }
 
     // 登录用户获取活动信息
-    @GetMapping("/auth/activity/{period}/{type}/{startDate}/{start}/{size}/{tag}")
-    public Result getActivityListWithSubscribeInfoWithSize(@PathVariable String period,
-                                                           @PathVariable String type,
-                                                           @PathVariable Date startDate,
+    @GetMapping("/auth/activity/week/view/{startDate}/{start}/{size}/{tag}")
+    public Result getWeekActivityListWithSubscribeInfoWithSizeByView(@PathVariable Date startDate,
                                                            @PathVariable int tag,
                                                            @PathVariable int start,
                                                            @PathVariable int size){
-        Integer delay = ConstantMapper.translatePeriod(period);
-        if(delay != null){
-            if("view".equals(type) || "subscribe".equals(type)){
-                return activityService.getRangeByIntWithSubscribeInfo(startDate, delay, start, size, tag, type);
-            }
-        }
-        return Result.error(400, "BAD_REQUEST");
+        return activityService.getRangeByIntWithSubscribeInfo(startDate, 6, start, size, tag, "view");
     }
 
-    @GetMapping("/auth/activity/{period}/{type}/{startDate}/{tag}/{start}")
-    public Result getActivityListWithSubscribeInfo(@PathVariable String period,
-                                                   @PathVariable String type,
+    @GetMapping("/auth/activity/week/view/{startDate}/{start}/{tag}")
+    public Result getWeekActivityListWithSubscribeInfoByView(@PathVariable Date startDate,
+                                                   @PathVariable int tag,
+                                                   @PathVariable int start){
+        return getWeekActivityListWithSubscribeInfoWithSizeByView(startDate, tag, start, Conf.PageSize);
+    }
+
+    @GetMapping("/auth/activity/week/subscribe/{startDate}/{start}/{size}/{tag}")
+    public Result getWeekActivityListWithSubscribeInfoWithSizeBySubscribe(@PathVariable Date startDate,
+                                                           @PathVariable int tag,
+                                                           @PathVariable int start,
+                                                           @PathVariable int size){
+        return activityService.getRangeByIntWithSubscribeInfo(startDate, 6, start, size, tag, "subscribe");
+    }
+
+    @GetMapping("/auth/activity/week/subscribe/{startDate}/{start}/{tag}")
+    public Result getWeekActivityListWithSubscribeInfoBySubscribe(@PathVariable Date startDate,
+                                                   @PathVariable int tag,
+                                                   @PathVariable int start){
+        return getWeekActivityListWithSubscribeInfoWithSizeBySubscribe(startDate, tag, start, Conf.PageSize);
+    }
+
+    @GetMapping("/auth/activity/days/view/{startDate}/{start}/{size}/{tag}")
+    public Result getDaysActivityListWithSubscribeInfoWithSizeByView(@PathVariable Date startDate,
+                                                           @PathVariable int tag,
+                                                           @PathVariable int start,
+                                                           @PathVariable int size){
+        return activityService.getRangeByIntWithSubscribeInfo(startDate, 2, start, size, tag, "view");
+    }
+
+    @GetMapping("/auth/activity/days/view/{startDate}/{start}/{tag}")
+    public Result getDaysActivityListWithSubscribeInfoByView(
                                                    @PathVariable Date startDate,
                                                    @PathVariable int tag,
                                                    @PathVariable int start){
-        return getActivityListWithSubscribeInfoWithSize(period, type, startDate, tag, start, Conf.PageSize);
+        return getDaysActivityListWithSubscribeInfoWithSizeByView(startDate, tag, start, Conf.PageSize);
+    }
+
+    @GetMapping("/auth/activity/days/subscribe/{startDate}/{start}/{size}/{tag}")
+    public Result getDaysActivityListWithSubscribeInfoWithSizeBySubscribe(@PathVariable Date startDate,
+                                                           @PathVariable int tag,
+                                                           @PathVariable int start,
+                                                           @PathVariable int size){
+        return activityService.getRangeByIntWithSubscribeInfo(startDate, 2, start, size, tag, "subscribe");
+    }
+
+    @GetMapping("/auth/activity/days/subscribe/{startDate}/{start}/{tag}")
+    public Result getDaysActivityListWithSubscribeInfoBySubscribe(@PathVariable Date startDate,
+                                                   @PathVariable int tag,
+                                                   @PathVariable int start){
+        return getDaysActivityListWithSubscribeInfoWithSizeBySubscribe(startDate, tag, start, Conf.PageSize);
     }
 
     @GetMapping("/auth/activity/{startDate}/{endDate}/{start}/{size}/{tag}")

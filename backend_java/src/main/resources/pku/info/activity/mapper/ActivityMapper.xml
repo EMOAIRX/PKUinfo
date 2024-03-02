@@ -14,18 +14,18 @@
         SELECT COUNT(*)
         FROM (SELECT * FROM t_activity_info WHERE start_date BETWEEN #{startDate} AND #{endDate}
             <if test="tag != null">
-                type LIKE '%'#{tag}'%'
+                AND type LIKE concat('%',#{tag,jdbcType=VARCHAR},'%')
             </if>
         ) AS AI
     </select>
 
     <select id="getSubscribedActivityInfo" resultType="pku.info.activity.vo.ActivityWithSubscribeInfo">
         WITH t_user_subscribe(activity_id) AS (SELECT activity_id FROM t_activity_subscription WHERE user_id = #{id})
-        SELECT id, title, address, start_date, end_date, start_time, end_time, description, college, account_link, extra_info, view, subscribe, type, IF(ISNULL(activity_id), FALSE, TRUE) AS is_subscribed
+        SELECT id, title, address, start_date, end_date, start_time, end_time, description, college, account_link, extra_info, view, subscribe, type AS tags, IF(ISNULL(activity_id), FALSE, TRUE) AS is_subscribed
         FROM (SELECT * FROM t_activity_info WHERE
             start_date BETWEEN #{startDate} AND #{endDate}
             <if test="tag != null">
-                AND LIKE '%'#{tag}'%'
+                AND type LIKE concat('%',#{tag,jdbcType=VARCHAR},'%')
             </if>
         ) AS AI
         LEFT JOIN t_user_subscribe AS US ON US.activity_id = AI.id

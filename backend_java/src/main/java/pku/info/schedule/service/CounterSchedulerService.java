@@ -55,7 +55,6 @@ public class CounterSchedulerService {
                 operations.multi();
                 for (Object key : keys) {
                     // 清除Redis字段
-                    System.out.println("Clear Data" + field + key);
                     stringRedisTemplate.opsForHash().delete(field, key);
                 }
                 return operations.exec();

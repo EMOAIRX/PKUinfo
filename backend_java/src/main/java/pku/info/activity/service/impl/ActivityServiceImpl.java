@@ -124,7 +124,6 @@ public class ActivityServiceImpl implements ActivityService {
             return Result.error(403, "UNAUTHORIZED");
         }else{
             String tagName = ConstantMapper.translateTag(tag);
-            System.out.println("Fuck1");
             int count = activityMapper.getSubscribeActivityCount(startDate, endDate, userId, tagName);
             pku.info.activity.vo.Page page = new pku.info.activity.vo.Page();
             page.setTotal(count);
