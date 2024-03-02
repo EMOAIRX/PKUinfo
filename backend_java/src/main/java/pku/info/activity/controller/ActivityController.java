@@ -17,7 +17,7 @@ public class ActivityController {
     private ActivityService activityService;
 
     @GetMapping("/activity/{period}/{type}/{startDate}/{start}/{size}/{tag}")
-    public Result getActivityList(@PathVariable Date startDate,
+    public Result getActivityListWithSize(@PathVariable Date startDate,
                                   @PathVariable int start,
                                   @PathVariable int size,
                                   @PathVariable int tag,
@@ -39,7 +39,7 @@ public class ActivityController {
                                   @PathVariable int tag,
                                   @PathVariable String period,
                                   @PathVariable String type){
-        return getActivityList(startDate, start, Conf.PageSize, tag, period, type);
+        return getActivityListWithSize(startDate, start, Conf.PageSize, tag, period, type);
     }
 
     // 获取活动
