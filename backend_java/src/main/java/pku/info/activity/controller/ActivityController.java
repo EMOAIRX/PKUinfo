@@ -126,7 +126,7 @@ public class ActivityController {
         return getActivityListWithSubscribeInfoWithSize(period, type, startDate, tag, start, Conf.PageSize);
     }
 
-    @GetMapping("/auth/activity/{startDate}/{endDate}/{start}/{size/{tag}")
+    @GetMapping("/auth/activity/{startDate}/{endDate}/{start}/{size}/{tag}")
     public Result getRangeActivityWithSubscribeInfoWithSize(@PathVariable Date startDate,
                                            @PathVariable Date endDate,
                                            @PathVariable int start,
