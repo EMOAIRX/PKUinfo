@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as o,a as s}from"./index-CjEgMWgq.js";const a={},c={class:"container mx-auto"},n=s("h1",{class:"text-xl text-green-400 data-[theme=dark]:text-pink-400"},"Profile page",-1),r=[n];function _(i,d){return t(),o("div",c,r)}const f=e(a,[["render",_]]);export{f as default};
