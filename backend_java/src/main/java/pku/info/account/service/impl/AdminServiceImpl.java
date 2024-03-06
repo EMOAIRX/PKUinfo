@@ -2,6 +2,7 @@ package pku.info.account.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pku.info.account.bo.Role;
@@ -91,6 +92,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @CacheEvict(value = "activity", allEntries = true)
     public Result deleteActivity(Integer id) {
         int res = activityMapper.deleteById(id);
         if(res != 1){

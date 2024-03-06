@@ -7,7 +7,7 @@
 
     <select id="getSubscribedActivity" resultType="pku.info.activity.entity.Activity">
         WITH t_user_subscribe(activity_id) AS (SELECT activity_id FROM t_activity_subscription WHERE user_id = #{id})
-        SELECT * FROM t_activity_info AS AI INNER JOIN t_user_subscribe AS US ON AI.id = US.activity_id WHERE AI.start_date >= #{now}
+        SELECT id, title, address, start_date, end_date, start_time, end_time, description, college, account_link AS link, extra_info AS info, view, subscribe, type AS tags FROM t_activity_info AS AI INNER JOIN t_user_subscribe AS US ON AI.id = US.activity_id WHERE AI.start_date >= #{now}
     </select>
 
     <select id="getSubscribeActivityCount" resultType="java.lang.Integer">
@@ -21,7 +21,7 @@
 
     <select id="getSubscribedActivityInfo" resultType="pku.info.activity.vo.ActivityWithSubscribeInfo">
         WITH t_user_subscribe(activity_id) AS (SELECT activity_id FROM t_activity_subscription WHERE user_id = #{id})
-        SELECT id, title, address, start_date, end_date, start_time, end_time, description, college, account_link, extra_info, view, subscribe, type AS tags, IF(ISNULL(activity_id), FALSE, TRUE) AS is_subscribed
+        SELECT id, title, address, start_date, end_date, start_time, end_time, description, college, account_link AS link, extra_info AS info, view, subscribe, type AS tags, IF(ISNULL(activity_id), FALSE, TRUE) AS is_subscribed
         FROM (SELECT * FROM t_activity_info WHERE
             start_date BETWEEN #{startDate} AND #{endDate}
             <if test="tag != null">

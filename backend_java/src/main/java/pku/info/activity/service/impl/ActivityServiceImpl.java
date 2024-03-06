@@ -74,7 +74,9 @@ public class ActivityServiceImpl implements ActivityService {
     }
     @Override
     public Result getSubscribedActivity() {
-        return Result.success(activityMapper.getSubscribedActivity(getUserId(),new Date(new java.util.Date().getTime())));
+        List<Activity> list = activityMapper.getSubscribedActivity(getUserId(),new Date(new java.util.Date().getTime()));
+        System.out.println(list);
+        return Result.success(list);
     }
     @Override
     public Result subscribe(Integer activityId) {
