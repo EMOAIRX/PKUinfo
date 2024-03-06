@@ -9,11 +9,10 @@ export function encrypt(word) {
   return encrypted.toString()
 }
 
-// 解密
-export function decrypt(word) {
-  const key = CryptoES.enc.Utf8.parse(keyStr)
-  const decryptStr = CryptoES.AES.decrypt(word, key, { mode: CryptoES.mode.ECB, padding: CryptoES.pad.Pkcs7 })
-  return CryptoES.enc.Utf8.stringify(decryptStr).toString()
-}
+// function decrypt(word) {
+//   const key = CryptoES.enc.Utf8.parse(keyStr)
+//   const decryptStr = CryptoES.AES.decrypt(word, key, { mode: CryptoES.mode.ECB, padding: CryptoES.pad.Pkcs7 })
+//   return CryptoES.enc.Utf8.stringify(decryptStr).toString()
+// }
 
-export default { encrypt, decrypt }
+export default { encrypt }

@@ -25,12 +25,6 @@ const router = createRouter({
       meta: { isLogin : true },
       component: () => import('../views/ProfileView.vue')
     },
-    // {
-    //   path: '/settings',
-    //   name: 'settings',
-    //   meta: { isLogin : true },
-    //   component: () => import('../views/SettingsView.vue')
-    // },
     {
       path: '/about',
       name: 'about',
@@ -47,10 +41,21 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue')
     },
     {
+      path: '/admindash',
+      name: 'admin',
+      meta: { isAdmin: true },
+      component: () => import('../views/AdminDashView.vue'),
+    },
+    {
+      path: '/adminlogin',
+      name: 'adminlogin',
+      component: () => import('../views/AdminLoginView.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue')
-    }
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -63,15 +68,24 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // 判断将要访问的路由信息对象是否需要用户登录
   if (to.meta.isLogin) {
-      let userLogin = sessionStorage.getItem('auth') // 获取存储对象
-      // 判断用户是否已经登陆了
-      if(userLogin == null) {
-          // 未登录 --> 跳转至登录页
-          return next({
-            path: '/login',
-            query: { redirect: to.fullPath }
-          })
-      }
+    let userLogin = sessionStorage.getItem('auth') // 获取存储对象
+    // 判断用户是否已经登陆了
+    if(userLogin == null) {
+      // 未登录 --> 跳转至登录页
+      return next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    }
+  }
+  if (to.meta.isAdmin) {
+    let adminLogin = sessionStorage.getItem('admin')
+    if(adminLogin == null) {
+      return next({
+        path: '/adminlogin',
+        query: { redirect: to.fullPath }
+      })
+    }
   }
   return next() // 放行
 })

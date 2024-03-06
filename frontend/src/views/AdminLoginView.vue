@@ -5,7 +5,6 @@ import { useToast } from 'vue-toastification';
 import { useRoute, useRouter } from 'vue-router';
 import { useInfoStore } from '../stores/infoStore';
 import { storeToRefs } from 'pinia';
-import { encrypt } from '@/utils/aes';
 import { Eye, EyeOff } from 'lucide-vue-next';
 
 const infoStore = useInfoStore();
@@ -19,24 +18,20 @@ const user = reactive({
   password: ''
 })
 const showPassword = ref(false)
-const isConstant = ref(false)
 
 async function signin() {
   if (user.username === '' || user.password === '') {
     toast.error('用户名或密码不能为空')
     return;
   }
-  await request.post('/login', {
+  await request.post('/admin/login', {
     username: user.username,
-    password: encrypt(user.password)
+    password: user.password
   }).then((res) => {
     // console.log(res.data)
     if (res.data.code === 200) {
       loginStatus.value = true
-      sessionStorage.setItem('auth', res.data.data.token)
-      if (isConstant.value) {
-        localStorage.setItem('auth', res.data.data.token)
-      }
+      sessionStorage.setItem('admin', res.data.data.token)
       toast.success('登录成功')
       if (route.query.redirect) {
         const path = route.query.redirect
@@ -58,7 +53,7 @@ async function signin() {
 
 <template>
   <div class="grow flex flex-col space-y-4 justify-center items-center h-full">
-    <h1 class="text-2xl font-bold">登录</h1>
+    <h1 class="text-2xl font-bold">管理员登录</h1>
     <label class="input input-bordered flex items-center gap-2">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" /></svg>
       <input type="text" class="grow" placeholder="用户名" v-model="user.username" />
@@ -72,15 +67,12 @@ async function signin() {
         <Eye class="w-4" v-else/>
       </span>
     </label>
-    <label class="label cursor-pointer">
+    <!-- <label class="label cursor-pointer">
       <input type="checkbox" v-model="isConstant" class="checkbox checkbox-primary checkbox-sm" />
       <span class="label-text ml-2">保持登录状态</span> 
-    </label>
+    </label> -->
     <div class="flex flex-row justify-center items-center space-x-4">
-      <button class="btn btn-primary px-6 text-primary-content" @click="signin">登录</button>
-    <button class="btn btn-neutral px-6" @click="router.replace({path:'/register',query: {
-      redirect: route.query.redirect ? route.query.redirect : '/'
-    }})">注册</button>
+      <button class="btn btn-primary px-10 text-primary-content" @click="signin">登录</button>
     </div>
   </div>
 </template>

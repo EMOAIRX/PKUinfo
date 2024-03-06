@@ -21,6 +21,7 @@ const options = {
   newestOnTop: true,
   pauseOnHover: false,
   timeout: 2000,
+  containerClassName: "my-container-class",
 };
 app.use(Toast, options);
 
