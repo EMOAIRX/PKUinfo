@@ -92,17 +92,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    @CacheEvict(value = "activity", allEntries = true)
-    public Result deleteActivity(Integer id) {
-        int res = activityMapper.deleteById(id);
-        if(res != 1){
-            return Result.error(400,"UNABLE_TO_DELETE");
-        }else{
-            return Result.success();
-        }
-    }
-
-    @Override
     public Result getAccount() {
         QueryWrapper<UserAccount> userAccountQueryWrapper = new QueryWrapper<>();
         userAccountQueryWrapper.eq("deleted",0);

@@ -11,8 +11,6 @@ public interface AdminService {
 
     Result deleteAccount(Integer id);
 
-    Result deleteActivity(Integer id);
-
     Result getAccount();
 
     Result getActivity();

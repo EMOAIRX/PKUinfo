@@ -14,7 +14,7 @@ public interface ActivityMapper extends BaseMapper<Activity> {
 
     Integer getSubscribeActivityCount(Date startDate, Date endDate, Integer id, String tag);
 
-    List<ActivityWithSubscribeInfo> getSubscribedActivityInfo(Date startDate, Date endDate, Integer id, Integer start, Integer size, String tag, String type);
+    List<ActivityWithSubscribeInfo> getSubscribedActivityInfo(Date startDate, Date endDate, Integer id, Integer start, Integer size, String tag, String type, Boolean descend);
 
     List<Activity> getSubscribedActivity(Integer id, Date now);
 }

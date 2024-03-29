@@ -30,6 +30,14 @@ public class JWTInterceptor implements HandlerInterceptor {
             response.getWriter().write(JSON.toJSONString(Result.error(401, "ILLEGAL_AUTHENTICATION_TOKEN"), SerializerFeature.WriteMapNullValue));
             return false;
         }
+
+        String targetURL = request.getRequestURI().substring(4);
+        if(targetURL.startsWith("/admin")){
+            if(!(Role.valueOf(claims.get("role").asString()) == Role.ADMIN)){
+                response.getWriter().write(JSON.toJSONString(Result.error(401, "PERMISSION_DENIED"), SerializerFeature.WriteMapNullValue));
+                return false;
+            }
+        }
         UserIdentification userIdentification = new UserIdentification();
         userIdentification.setId(Integer.parseInt(claims.get("id").toString()));
         userIdentification.setRole(Role.valueOf(claims.get("role").asString()));

@@ -18,7 +18,13 @@ public interface ActivityService {
 
     Result getRangeByInt(Date startDate, int delay, int start, int size, int tag, String type);
 
+    Result getRangeByIntWithOrder(Date startDate, int delay, int start, int size, int tag, String type, Boolean desc);
+
     Result insertActivity(Activity activity);
+
+    Result deleteActivity(Integer id);
+
+    Result modifyActivity(Activity activity);
 
     Result getSubscribedActivity();
 
@@ -26,7 +32,7 @@ public interface ActivityService {
 
     Result unsubscribe(Integer id);
 
-    Result getRangeByIntWithSubscribeInfo(Date startDate, Integer delay, int start, int size, int tag, String type);
+    Result getRangeByIntWithSubscribeInfo(Date startDate, Integer delay, int start, int size, int tag, String type, Boolean desc);
 
-    Result getRangeByDateWithSubscribeInfo(Date startDate, Date endDate, int start, int size, int tag, String type);
+    Result getRangeByDateWithSubscribeInfo(Date startDate, Date endDate, int start, int size, int tag, String type, Boolean desc);
 }

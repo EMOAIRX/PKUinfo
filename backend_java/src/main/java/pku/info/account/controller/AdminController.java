@@ -24,17 +24,6 @@ public class AdminController {
         return adminService.register(registerInfo);
     }
 
-    @DeleteMapping("/admin/user/{id}")
-    public Result deleteAccount(@PathVariable Integer id){
-        return adminService.deleteAccount(id);
-    }
-
-    @DeleteMapping("/admin/activity/{id}")
-    @CacheEvict(value = "activity", allEntries = true)
-    public Result deleteActivity(@PathVariable Integer id){
-        return adminService.deleteActivity(id);
-    }
-
     @GetMapping("/admin/activity")
     public Result getActivity(){
         return adminService.getActivity();
@@ -43,5 +32,10 @@ public class AdminController {
     @GetMapping("/admin/user")
     public Result getAccount(){
         return adminService.getAccount();
+    }
+
+    @DeleteMapping("/admin/user/{id}")
+    public Result deleteAccount(@PathVariable Integer id){
+        return adminService.deleteAccount(id);
     }
 }

@@ -29,7 +29,13 @@
             </if>
         ) AS AI
         LEFT JOIN t_user_subscribe AS US ON US.activity_id = AI.id
-        ORDER BY ${type} DESC
+        ORDER BY ${type}
+        <if test="descend == true">
+            DESC
+        </if>
+        <if test="descend == false">
+            ASC
+        </if>
         LIMIT #{start},#{size}
     </select>
 </mapper>

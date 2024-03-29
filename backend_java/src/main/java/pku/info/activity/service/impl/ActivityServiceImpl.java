@@ -62,6 +62,12 @@ public class ActivityServiceImpl implements ActivityService {
     public Result getRangeByInt(Date startDate, int delay, int start, int size, int tag, String type) {
         return selectRange(startDate, setDate(startDate, delay), start, size, type, true, tag);
     }
+
+    @Override
+    public Result getRangeByIntWithOrder(Date startDate, int delay, int start, int size, int tag, String type, Boolean desc) {
+        return selectRange(startDate, setDate(startDate, delay), start, size, type, desc, tag);
+    }
+
     @Override
     @CacheEvict(value = "activity", allEntries = true)
     public Result insertActivity(Activity activity) {
@@ -114,13 +120,13 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Result getRangeByIntWithSubscribeInfo(Date startDate, Integer delay, int start, int size, int tag, String type) {
+    public Result getRangeByIntWithSubscribeInfo(Date startDate, Integer delay, int start, int size, int tag, String type, Boolean desc) {
         Date endDate = setDate(startDate, delay);
-        return getRangeByDateWithSubscribeInfo(startDate, endDate, start, size, tag, type);
+        return getRangeByDateWithSubscribeInfo(startDate, endDate, start, size, tag, type, desc);
     }
 
     @Override
-    public Result getRangeByDateWithSubscribeInfo(Date startDate, Date endDate, int start, int size, int tag, String type) {
+    public Result getRangeByDateWithSubscribeInfo(Date startDate, Date endDate, int start, int size, int tag, String type, Boolean desc) {
         Integer userId = getUserId();
         if(userId == -1){
             return Result.error(403, "UNAUTHORIZED");
@@ -138,7 +144,7 @@ public class ActivityServiceImpl implements ActivityService {
                 return Result.success(page);
             }
             Integer startIndex = (start - 1) * size;
-            List<ActivityWithSubscribeInfo> activityList = activityMapper.getSubscribedActivityInfo(startDate, endDate, userId, startIndex, size, tagName, type);
+            List<ActivityWithSubscribeInfo> activityList = activityMapper.getSubscribedActivityInfo(startDate, endDate, userId, startIndex, size, tagName, type, desc);
             page.setRecords(activityList.toArray());
             return Result.success(page);
         }
@@ -151,7 +157,7 @@ public class ActivityServiceImpl implements ActivityService {
         Subscription subscription = subscribeMapper.selectOne(subscriptionQueryWrapper);
         return subscription != null;
     }
-    private Result selectRange(Date startDate, Date endDate, int start, int size, String col, boolean asc, int tag){
+    private Result selectRange(Date startDate, Date endDate, int start, int size, String col, boolean desc, int tag){
         IPage<Activity> page = new Page<>(start, size);
         QueryWrapper<Activity> activityQueryWrapper = new QueryWrapper<>();
         activityQueryWrapper.between("start_date",startDate, endDate);
@@ -160,7 +166,7 @@ public class ActivityServiceImpl implements ActivityService {
         if(tagName != null){
             activityQueryWrapper.like("type", tagName);
         }
-        activityQueryWrapper.orderBy((col != null), !asc, col);
+        activityQueryWrapper.orderBy((col != null), !desc, col);
         return Result.success(activityMapper.selectPage(page, activityQueryWrapper));
     }
     private Integer getUserId(){
@@ -177,5 +183,28 @@ public class ActivityServiceImpl implements ActivityService {
     private Date setDate(Date startDate, Integer delay){
         long DAY = 1000 * 3600 * 24;
         return new Date(startDate.getTime() + DAY * delay);
+    }
+
+
+
+    @Override
+    @CacheEvict(value = "activity", allEntries = true)
+    public Result deleteActivity(Integer id) {
+        int res = activityMapper.deleteById(id);
+        if(res != 1){
+            return Result.error(400,"UNABLE_TO_DELETE");
+        }else{
+            return Result.success();
+        }
+    }
+
+    @Override
+    @CacheEvict(value = "activity", allEntries = true)
+    public Result modifyActivity(Activity activity) {
+        if(activityMapper.updateById(activity) == 1){
+            return Result.success();
+        }else{
+            return Result.error(500,"UNABLE_TO_UPDATE_ACTIVITY");
+        }
     }
 }

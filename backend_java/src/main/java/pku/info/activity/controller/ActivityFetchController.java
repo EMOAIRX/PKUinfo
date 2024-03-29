@@ -11,7 +11,7 @@ import java.sql.Date;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class ActivityController {
+public class ActivityFetchController {
     @Resource
     private ActivityService activityService;
 
@@ -96,13 +96,44 @@ public class ActivityController {
         return getRangeActivityWithSize(startDate, endDate, start, Conf.PageSize, tag);
     }
 
+    @GetMapping("/activity/week/default/{startDate}/{start}/{size}/{tag}")
+    public Result getWeekActivityListWithSizeByDefault(@PathVariable Date startDate,
+                                                       @PathVariable int start,
+                                                       @PathVariable int size,
+                                                       @PathVariable int tag){
+        return activityService.getRangeByIntWithOrder(startDate, 6, start, size, tag, "start_date", false);
+    }
+
+    @GetMapping("/activity/week/default/{startDate}/{start}/{tag}")
+    public Result getWeekActivityListByDefault(@PathVariable Date startDate,
+                                               @PathVariable int start,
+                                               @PathVariable int tag){
+        return getWeekActivityListWithSizeByDefault(startDate, start, Conf.PageSize, tag);
+    }
+
+    @GetMapping("/auth/activity/week/default/{startDate}/{start}/{size}/{tag}")
+    public Result getWeekActivityListWithSubscribeInfoWithSizeByDefault(@PathVariable Date startDate,
+                                                                        @PathVariable int start,
+                                                                        @PathVariable int size,
+                                                                        @PathVariable int tag){
+        return activityService.getRangeByIntWithSubscribeInfo(startDate, 6,start,size,tag,"start_date",false);
+    }
+
+    @GetMapping("/auth/activity/week/default/{startDate}/{start}/{tag}")
+    public Result getWeekActivityListWithSubscribeInfoByDefault(@PathVariable Date startDate,
+                                                                @PathVariable int start,
+                                                                @PathVariable int size,
+                                                                @PathVariable int tag){
+        return getWeekActivityListWithSubscribeInfoWithSizeByDefault(startDate, start, Conf.PageSize, tag);
+    }
+
     // 登录用户获取活动信息
     @GetMapping("/auth/activity/week/view/{startDate}/{start}/{size}/{tag}")
     public Result getWeekActivityListWithSubscribeInfoWithSizeByView(@PathVariable Date startDate,
                                                            @PathVariable int tag,
                                                            @PathVariable int start,
                                                            @PathVariable int size){
-        return activityService.getRangeByIntWithSubscribeInfo(startDate, 6, start, size, tag, "view");
+        return activityService.getRangeByIntWithSubscribeInfo(startDate, 6, start, size, tag, "view", true);
     }
 
     @GetMapping("/auth/activity/week/view/{startDate}/{start}/{tag}")
@@ -117,7 +148,7 @@ public class ActivityController {
                                                            @PathVariable int tag,
                                                            @PathVariable int start,
                                                            @PathVariable int size){
-        return activityService.getRangeByIntWithSubscribeInfo(startDate, 6, start, size, tag, "subscribe");
+        return activityService.getRangeByIntWithSubscribeInfo(startDate, 6, start, size, tag, "subscribe", true);
     }
 
     @GetMapping("/auth/activity/week/subscribe/{startDate}/{start}/{tag}")
@@ -132,7 +163,7 @@ public class ActivityController {
                                                            @PathVariable int tag,
                                                            @PathVariable int start,
                                                            @PathVariable int size){
-        return activityService.getRangeByIntWithSubscribeInfo(startDate, 2, start, size, tag, "view");
+        return activityService.getRangeByIntWithSubscribeInfo(startDate, 2, start, size, tag, "view", true);
     }
 
     @GetMapping("/auth/activity/days/view/{startDate}/{start}/{tag}")
@@ -148,7 +179,7 @@ public class ActivityController {
                                                            @PathVariable int tag,
                                                            @PathVariable int start,
                                                            @PathVariable int size){
-        return activityService.getRangeByIntWithSubscribeInfo(startDate, 2, start, size, tag, "subscribe");
+        return activityService.getRangeByIntWithSubscribeInfo(startDate, 2, start, size, tag, "subscribe", true);
     }
 
     @GetMapping("/auth/activity/days/subscribe/{startDate}/{start}/{tag}")
@@ -164,7 +195,7 @@ public class ActivityController {
                                            @PathVariable int start,
                                            @PathVariable int size,
                                            @PathVariable int tag) {
-        return activityService.getRangeByDateWithSubscribeInfo(startDate, endDate, start, size, tag, null);
+        return activityService.getRangeByDateWithSubscribeInfo(startDate, endDate, start, size, tag, null, true);
     }
 
     @GetMapping("/auth/activity/{startDate}/{endDate}/{start}/{tag}")
@@ -175,29 +206,10 @@ public class ActivityController {
         return getRangeActivityWithSubscribeInfoWithSize(startDate, endDate, start, Conf.PageSize, tag);
     }
 
-    // 新增活动
-    @PutMapping ("/activity")
-    public Result insertActivity(@RequestBody Activity activity){
-        // 输出activity
-        System.out.println(activity);
-        return activityService.insertActivity(activity);
-    }
-
     // 获取订阅活动
     @GetMapping("/auth/activity/subscribed")
     public Result getSubscribedActivity(){
         return activityService.getSubscribedActivity();
     }
 
-    // 订阅
-    @PutMapping("/auth/subscribe/{id}")
-    public Result subscribe(@PathVariable Integer id){
-        return activityService.subscribe(id);
-    }
-
-    // 取消订阅
-    @DeleteMapping("/auth/subscribe/{id}")
-    public Result unsubscribe(@PathVariable Integer id){
-        return activityService.unsubscribe(id);
-    }
 }
